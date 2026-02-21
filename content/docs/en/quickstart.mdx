@@ -84,10 +84,10 @@ Define a schema and create a collection:
               indexParams: { indexType: ZVecIndexType.HNSW, metricType: ZVecMetricType.COSINE }
           }
       ]
-  })
+  });
 
   // Create a collection
-  const collection = ZVecCreateAndOpen("/path/to/my/collection", collectionSchema)    // [!code highlight]
+  const collection = ZVecCreateAndOpen("/path/to/my/collection", collectionSchema);     // [!code highlight]
   ```
 
   <Callout className="text-base" type="info">
@@ -123,7 +123,7 @@ Define a schema and create a collection:
       id: "book_1",   // Unique document ID
       vectors: { "embedding": Array(768).fill(0.1) },  // Replace with your actual vector
       fields: { "publish_year": 1936 }
-  })
+  });
   ```
 
   <Callout className="text-base" type="info">
@@ -144,7 +144,7 @@ collection.optimize()
 
 ```ts tab="Node.js" title="Optimize a collection"
 // [!code word:optimizeSync]
-collection.optimizeSync()
+collection.optimizeSync();
 ```
 
 ## Retrieve a Document by ID
@@ -169,8 +169,8 @@ collection.optimizeSync()
   ```
 
   ```ts tab="Node.js" title="Fetch a document"
-  let result = collection.fetchSync("book_1")   // [!code highlight]
-  console.log(result)
+  let result = collection.fetchSync("book_1");  // [!code highlight]
+  console.log(result);
 
   // {
   //     book_1: {
@@ -229,8 +229,8 @@ Use [`query()`](../data-operations/query/) to find documents most similar to a g
       fieldName: "embedding",
       vector: Array(768).fill(0.3),     // Replace with your actual vector
       topk: 10
-  })
-  console.log(result)
+  });
+  console.log(result);
 
   // [
   //     {
@@ -299,8 +299,8 @@ Combine vector search with conditional filters:
       vector: Array(768).fill(0.3),   // Replace with your actual vector
       topk: 10,
       filter: "publish_year > 1936"       // [!code highlight]
-  })
-  console.log(result)
+  });
+  console.log(result);
 
   // [
   //     {
@@ -336,7 +336,7 @@ print(collection.schema)
 
 ```ts tab="Node.js" title="View collection schema"
 // [!code word:schema]
-console.log(collection.schema.toString())
+console.log(collection.schema.toString());
 ```
 
 View the collection's statistics:
@@ -348,7 +348,7 @@ print(collection.stats)
 
 ```ts tab="Node.js" title="View collection statistics"
 // [!code word:stats]
-console.log(collection.stats)
+console.log(collection.stats);
 ```
 
 ## Delete a Document
@@ -362,7 +362,7 @@ collection.delete(ids="book_1")
 
 ```ts tab="Node.js" title="Delete a document"
 // [!code word:deleteSync]
-collection.deleteSync("book_1")
+collection.deleteSync("book_1");
 ```
 
 [Delete](../data-operations/delete/#delete-by-filter-condition) documents by filter condition:
@@ -374,7 +374,7 @@ collection.delete_by_filter(filter="publish_year < 1900")
 
 ```ts tab="Node.js" title="Delete documents by filter condition"
 // [!code word:deleteByFilterSync]
-collection.deleteByFilterSync("publish_year < 1900")
+collection.deleteByFilterSync("publish_year < 1900");
 ```
 
 ---

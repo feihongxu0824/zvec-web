@@ -164,7 +164,7 @@ Indexes accelerate data retrieval beyond basic storage of scalar fields and vect
 You can define indexes at [collection creation](../../collections/create/) by specifying `index_param` in the schema for each field or vector.  
 Alternatively, you can add indexes after collection creation by calling [`create_index()`](../../collections/schema-evolution/#create-an-index) dynamically — no data re-ingestion required.
 
-```python title="Create a collection"
+```python tab="Python" title="Create a collection"
 import zvec
 
 # Define the collection schema with one scalar field and one vector field, both
@@ -190,4 +190,34 @@ schema = zvec.CollectionSchema(   # [!code highlight]
 )
 
 collection = zvec.create_and_open(path="/path/to/my/collection", schema=schema)   # [!code highlight]
+```
+
+```ts tab="Node.js" title="Create a collection"
+import { ZVecCollectionSchema, ZVecCreateAndOpen, ZVecDataType, ZVecIndexType, ZVecMetricType } from "@zvec/zvec";
+
+// Define the collection schema with one scalar field and one vector field, both
+// configured with indexes via "indexParams".
+// [!code word:indexParams]
+const schema = new ZVecCollectionSchema(  // [!code highlight]
+    {
+        name: "my_collection",
+        fields: [
+            {
+                name: "price",
+                dataType: ZVecDataType.INT32,
+                indexParams: { indexType: ZVecIndexType.INVERT, enableRangeOptimization: true }
+            }
+        ],
+        vectors: [
+            {
+                name: "vector",
+                dataType: ZVecDataType.VECTOR_FP32,
+                dimension: 256,
+                indexParams: { indexType: ZVecIndexType.HNSW, metricType: ZVecMetricType.COSINE }
+            }
+        ],
+    }
+);
+
+const collection = ZVecCreateAndOpen("/path/to/my/collection", schema);   // [!code highlight]
 ```

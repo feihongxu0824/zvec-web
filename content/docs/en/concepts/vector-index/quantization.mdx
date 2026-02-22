@@ -2,6 +2,9 @@
 title: Quantization
 ---
 
+
+import { PythonLinkButton, NodeJSLinkButton } from 'components/LinkButton.tsx';
+
 Quantization is a compression technique that ***transforms vectors from their original (specifically FP32) format into a more compact representation***, reducing the size of vector indexes used for search.
 
 This transformation approximates vectors using fewer bits per dimension — enabling:
@@ -28,9 +31,14 @@ To ensure data integrity and flexibility, **Zvec stores both the original vector
 
 ## Enabling Quantization
 
-You can **activate quantization when creating a vector index** in Zvec by specifying the desired quantization type (`FP16`, `INT8`, or `INT4`) through the `quantize_type` parameter in your `VectorSchema`.
+<div className="flex flex-row flex-wrap gap-3 items-center">
+  <PythonLinkButton url="/api-reference/python/schema/#zvec.model.schema.VectorSchema" label="Python API Reference" />
+  <NodeJSLinkButton url="/api-reference/nodejs/interfaces/ZVecVectorSchema" label="Node.js API Reference" />
+</div>
 
-Zvec will then automatically generate and manage the quantized representation alongside your original vectors.
+You can enable quantization at the time of vector index creation by selecting your preferred quantization type — e.g., `FP16`, `INT8`, or `INT4` — **using the `quantize_type` parameter in your `VectorSchema`**.
+
+Once set, Zvec automatically generates and manages the quantized representation alongside your original vectors.
 
 ---
 

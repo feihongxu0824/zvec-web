@@ -19,7 +19,7 @@ Before performing any database operations, you can optionally configure global s
 
 ## Configuration Example
 
-```python title="Global configuration"
+```python tab="Python" title="Global configuration"
 import zvec
 
 # [!code word:init]
@@ -28,6 +28,17 @@ zvec.init(
     log_level=zvec.LogLevel.WARN,
     query_threads=4,
 )
+```
+
+```ts tab="Node.js" title="Global configuration"
+import { ZVecInitialize, ZVecLogLevel, ZVecLogType } from "@zvec/zvec";
+
+// [!code word:ZVecInitialize]
+ZVecInitialize({
+    logType: ZVecLogType.CONSOLE,
+    logLevel: ZVecLogLevel.WARN,
+    queryThreads: 4
+});
 ```
 
 - Logs messages to the **console** at `WARN` level or higher.

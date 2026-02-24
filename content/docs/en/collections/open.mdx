@@ -14,13 +14,22 @@ To open an existing collection, use the `open()` function to load it from disk.
 
 ## Usage
 
-```python title="Open a collection"
+```python tab="Python" title="Open a collection"
 import zvec
 
 existing_collection = zvec.open(  # [!code highlight]
     path="/path/to/my/collection",
     option=zvec.CollectionOption(read_only=False, enable_mmap=True),
 )
+```
+
+```ts tab="Node.js" title="Open a collection"
+import { ZVecCollection, ZVecOpen } from "@zvec/zvec";
+
+const existingCollection: ZVecCollection = ZVecOpen(  // [!code highlight]
+    "/path/to/my/collection",
+    { readOnly: false, enableMMAP: true }
+);
 ```
 
 ## Parameters

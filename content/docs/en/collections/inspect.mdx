@@ -1,7 +1,7 @@
 ---
 title: Inspect
 extendedTitle: Inspect a Collection
-pythonApiReference: /api-reference/python/collection/
+pythonApiReference: /api-reference/python/collection/#zvec.model.collection.Collection
 nodejsApiReference: /api-reference/nodejs/classes/ZVecCollection
 ---
 
@@ -62,7 +62,7 @@ console.log(collection.schema.toString());
 <Accordions type="single">
   <Accordion title="Example">
 
-  ```json
+  ```json tab="Python"
   // [!code word:fields]
   // [!code word:vectors]
   {
@@ -73,7 +73,8 @@ console.log(collection.schema.toString());
         "data_type": "INT32",
         "nullable": false,
         "index_param": {
-          "enable_range_optimization": true
+          "enable_range_optimization": true,
+          "enable_extended_wildcard": false
         }
       },
       "category": {
@@ -81,7 +82,8 @@ console.log(collection.schema.toString());
         "data_type": "ARRAY_STRING",
         "nullable": true,
         "index_param": {
-          "enable_range_optimization": false
+          "enable_range_optimization": false,
+          "enable_extended_wildcard": false
         }
       },
       "image_url": {
@@ -92,14 +94,14 @@ console.log(collection.schema.toString());
       }
     },
     "vectors": {
-      "image_vector": {
-        "name": "image_vector",
+      "image_embedding": {
+        "name": "image_embedding",
         "data_type": "VECTOR_FP32",
         "dimension": 256,
         "index_param": {
           "type": "HNSW",
           "metric_type": "COSINE",
-          "m": 100,
+          "m": 50,
           "ef_construction": 500,
           "quantize_type": "UNDEFINED"
         }
@@ -108,16 +110,172 @@ console.log(collection.schema.toString());
   }
   ```
 
+  ```bash tab="Node.js"
+  # [!code word:scalar]
+  # [!code word:vector]
+  CollectionSchema{
+    name: 'my_collection',
+    max_doc_count_per_segment: 10000000,
+    fields: [
+      FieldSchema[vector]{
+        name: 'image_embedding',
+        data_type: VECTOR_FP32,
+        dimension: 256,
+        index_params: HnswIndexParams{metric:COSINE,quantize:UNDEFINED,m:50,ef_construction:500}
+      },
+      FieldSchema[scalar]{
+        name: 'price',
+        data_type: INT32,
+        nullable: false,
+        index_params: InvertIndexParams{enable_range_optimization:true, enable_extended_wildcard:false}
+      },
+      FieldSchema[scalar]{
+        name: 'category',
+        data_type: ARRAY_STRING,
+        nullable: true,
+        index_params: InvertIndexParams{enable_range_optimization:false, enable_extended_wildcard:false}
+      },
+      FieldSchema[scalar]{
+        name: 'image_url',
+        data_type: STRING,
+        nullable: true,
+        index_params: null
+      }
+    ]
+  }
+  ```
+
   1. `"name": "my_collection"`: The name of the collection.
-  1. `"fields"`: A map of scalar field names to their definitions.
+  1. **Scalar fields**:
+      - `"price"`: A **required** 32-bit integer, with inverted index and range query optimization enabled.
+      - `"category"`: An **optional** array of strings with an inverted index enabled; range query optimization is disabled (not meaningful for array types).
+      - `"image_url"`: An **optional** string, with no indexing applied.
+
       <Callout className="text-base" type="info">
-        If `index_param` is not null for a scalar field, that field has an [inverted index](../../concepts/inverted-index/).
+        If `index_param` is **non-null** for a scalar field, that field has an [inverted index](../../concepts/inverted-index/).
       </Callout>
-      - `"price"`: A required 32-bit integer, with inverted index and range query optimization enabled.
-      - `"category"`: An optional array of strings with an inverted index enabled; range query optimization is disabled (not meaningful for array types).
-      - `"image_url"`: An optional string, with no indexing applied.
-  1. `"vectors"`: A map of vector names to their definitions.
-      - `"image_vector"`: A 256-dimensional floating-point vector indexed with [HNSW](../../concepts/vector-index/hnsw-index/) using cosine similarity and no quantization.
+
+  1. **Vector fields**:
+      - `"image_embedding"`: A **256-dimensional** floating-point vector indexed with [HNSW](../../concepts/vector-index/hnsw-index/) using cosine similarity and no quantization.
+
+  </Accordion>
+</Accordions>
+
+To view only **scalar fields**:
+
+```python tab="Python"
+print(collection.schema.fields)
+```
+
+```ts tab="Node.js"
+console.log(collection.schema.fields());
+```
+
+<Accordions type="single">
+  <Accordion title="Example">
+
+  This will return an array of scalar fields.
+
+  ```json tab="Python"
+  [{
+    "name": "price",
+    "data_type": "INT32",
+    "nullable": false,
+    "index_param": {
+      "enable_range_optimization": true,
+      "enable_extended_wildcard": false
+    }
+  }, {
+    "name": "category",
+    "data_type": "ARRAY_STRING",
+    "nullable": true,
+    "index_param": {
+      "enable_range_optimization": false,
+      "enable_extended_wildcard": false
+    }
+  }, {
+    "name": "image_url",
+    "data_type": "STRING",
+    "nullable": true,
+    "index_param": null
+  }]
+  ```
+
+  ```json tab="Node.js"
+  [
+    {
+      name: 'price',
+      dataType: 4,
+      nullable: false,
+      indexParams: {
+        indexType: 10,
+        enableRangeOptimization: true,
+        enableExtendedWildcard: false
+      }
+    },
+    {
+      name: 'category',
+      dataType: 41,
+      nullable: true,
+      indexParams: {
+        indexType: 10,
+        enableRangeOptimization: false,
+        enableExtendedWildcard: false
+      }
+    },
+    { name: 'image_url', dataType: 2, nullable: true }
+  ]
+  ```
+
+  </Accordion>
+</Accordions>
+
+To view only **vector fields**:
+
+```python tab="Python"
+print(collection.schema.vectors)
+```
+
+```ts tab="Node.js"
+console.log(collection.schema.vectors());
+```
+
+<Accordions type="single">
+  <Accordion title="Example">
+
+  This will return an array of vector fields.
+
+  ```json tab="Python"
+  [{
+    "name": "image_embedding",
+    "data_type": "VECTOR_FP32",
+    "dimension": 256,
+    "index_param": {
+      "type": "HNSW",
+      "metric_type": "COSINE",
+      "m": 50,
+      "ef_construction": 500,
+      "quantize_type": "UNDEFINED"
+    }
+  }]
+  ```
+
+  ```json tab="Node.js"
+  [
+    {
+      name: 'image_embedding',
+      dataType: 23,
+      dimension: 256,
+      indexParams: {
+        indexType: 1,
+        metricType: 3,
+        m: 50,
+        efConstruction: 500,
+        quantizeType: 0
+      }
+    }
+  ]
+  ```
 
   </Accordion>
 </Accordions>
@@ -128,15 +286,23 @@ console.log(collection.schema.toString());
 
 The `stats` property provides real-time operational insights:
 
-```python
+```python tab="Python"
 print(collection.stats)
+```
+
+```ts tab="Node.js"
+console.log(collection.stats);
 ```
 
 <Accordions type="single">
   <Accordion title="Example">
 
-  ```json
-  {"doc_count":100, "index_completeness":{"image_vector":1.000000}}
+  ```json tab="Python"
+  {"doc_count":100, "index_completeness":{"image_embedding":1.000000}}
+  ```
+
+  ```json tab="Node.js"
+  { docCount: 100, indexCompleteness: { image_embedding: 1 } }
   ```
 
   1. `doc_count`: Total number of documents currently stored.
@@ -151,19 +317,27 @@ print(collection.stats)
 
 Runtime behavior is governed by the options used when opening the collection:
 
-```python
+```python tab="Python"
 print(collection.option)
+```
+
+```ts tab="Node.js"
+console.log(collection.options);
 ```
 
 <Accordions type="single">
   <Accordion title="Example">
 
-  ```json
+  ```json tab="Python"
   {"enable_mmap":1, "read_only":0}
   ```
 
-  1. `enable_mmap: 1` → Memory-mapped I/O is enabled for faster access.
-  1. `read_only: 0` → The collection is open for both reads and writes.
+  ```json tab="Node.js"
+  { readOnly: false, enableMMAP: true }
+  ```
+
+  1. `enable_mmap: 1/true` → Memory-mapped I/O is enabled for faster access.
+  1. `read_only: 0/false` → The collection is open for both reads and writes.
 
   </Accordion>
 </Accordions>
@@ -174,8 +348,12 @@ print(collection.option)
 
 The `path` property returns the on-disk location of the collection:
 
-```python
+```python tab="Python"
 print(collection.path)
+```
+
+```ts tab="Node.js"
+console.log(collection.path);
 ```
 
 <Accordions type="single">

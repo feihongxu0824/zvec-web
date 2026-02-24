@@ -39,7 +39,7 @@ Call `optimize()` periodically. This triggers a background process that merges t
 
 ## Usage Example
 
-```python title="Optimize a collection"
+```python tab="Python" title="Optimize a collection"
 import zvec
 
 collection = zvec.open(path="/path/to/my/collection")
@@ -53,21 +53,44 @@ for i in range(1000):
 collection.optimize()  # [!code highlight]
 ```
 
+```ts tab="Node.js" title="Optimize a collection"
+import { ZVecCollection, ZVecDocInput, ZVecOpen } from "@zvec/zvec";
+
+const collection: ZVecCollection = ZVecOpen("/path/to/my/collection");
+
+// Insert some documents
+for (let i = 0; i < 1000; i++) {
+    const doc: ZVecDocInput = { id: `doc_${i}`, vectors: { embedding: [i + 0.1, i + 0.2, i + 0.3] } };
+    collection.insertSync(doc);
+}
+
+// Optimize the collection
+collection.optimizeSync();  // [!code highlight]
+```
+
 ---
 
 ## Check Indexing Status
 
 Use the `stats` property to get real-time insights into your collection's indexing state:
 
-```python
+```python tab="Python"
 print(collection.stats)
+```
+
+```ts tab="Node.js"
+console.log(collection.stats);
 ```
 
 <Accordions type="single">
   <Accordion title="Example">
 
-  ```json
+  ```json tab="Python"
   {"doc_count":1000, "index_completeness":{"embedding":1.000000}}
+  ```
+
+  ```json tab="Node.js"
+  { docCount: 1000, indexCompleteness: { embedding: 1 } }
   ```
 
   1. `doc_count`: Total number of documents currently stored.

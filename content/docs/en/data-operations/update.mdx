@@ -21,7 +21,7 @@ The method accepts either a single `Doc` object or a list of `Doc` objects.
 Each `Doc` passed to `update()` must:
 
 - Specify an `id` that **already exists** in the collection (the operation will fail if the document is not found)
-- Include only the fields and vectors you **intend to update**, formatted according to the collection's [schema](../../collections/create/#step-1-define-the-schema):
+- Include only the fields and vectors you **intend to update**, formatted according to the collection's [schema](../../collections/create/#define-a-collection-schema):
   1. **Scalar fields** go in the `fields` dictionary (field names as keys)
   1. **Vector embeddings** go in the `vectors` dictionary (vector names as keys)
 - Omit any scalar fields or vectors you do not want to change — they will be left untouched.

@@ -87,7 +87,7 @@ collection.add_column(field_schema=new_field, expression="5")  # [!code highligh
 ```
 
 - `field_schema`:  
-    Defines the name and data type of the new field. See [scalar field schema](../create/#2-scalar-fields) for details.
+    Defines the name and data type of the new field. See [scalar field schema](../create/#scalar-fields) for details.
 - `expression`:  
     Specifies the default value for existing documents. Since they don't already have a `rating` field, Zvec uses this `expression` to fill in the missing values — in this case, setting `rating = 5` for all current documents.
 

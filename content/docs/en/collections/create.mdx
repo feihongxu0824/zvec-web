@@ -7,6 +7,7 @@ nodejsApiReference: /api-reference/nodejs/functions/ZVecCreateAndOpen
 
 
 import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
+import { Step, Steps } from 'fumadocs-ui/components/steps';
 import { PythonLinkButton, NodeJSLinkButton } from 'components/LinkButton.tsx';
 
 To create a new, empty collection in Zvec, you need to define the following:
@@ -22,7 +23,13 @@ Once defined, you call `create_and_open()` to create the collection on disk and 
 
 ---
 
-## Step 1: Define the Schema
+<Steps>
+
+<Step>
+
+## Define a Collection Schema
+
+</Step>
 
 A **collection schema** `CollectionSchema` defines the structure that every [document](../../concepts/data-modeling/#documents) inserted into the collection must conform to.
 
@@ -41,11 +48,21 @@ A **collection schema** `CollectionSchema` defines the structure that every [doc
   <NodeJSLinkButton url="/api-reference/nodejs/classes/ZVecCollectionSchema" label="Node.js API Reference" />
 </div>
 
-### 1. Collection Name
+<Steps>
+
+<Step>
+
+### Collection Name
+
+</Step>
 
 A human-readable identifier for your collection. This name is used internally for reference and logging.
 
-### 2. Scalar Fields
+<Step>
+
+### Scalar Fields
+
+</Step>
 
 Scalar fields store non-vector (i.e., structured) data — such as strings, numbers, booleans, or arrays.
 
@@ -56,52 +73,59 @@ Each field is defined using `FieldSchema` with the following properties:
 1. ⭕ `nullable` (optional): Whether the field is allowed to **have no value** (defaults to `False`).
 1. 🚀 `index_param` (optional): Enables fast filtering by creating an [inverted index](../../concepts/inverted-index/) via `InvertIndexParam`.
 
-<div className="flex flex-row flex-wrap gap-3 items-center">
+<div className="flex flex-row flex-wrap gap-3 items-center mb-6">
   <PythonLinkButton url="/api-reference/python/schema/#zvec.model.schema.FieldSchema" label="Python API Reference" />
   <NodeJSLinkButton url="/api-reference/nodejs/interfaces/ZVecFieldSchema" label="Node.js API Reference" />
 </div>
 
-<Callout className="text-base" type="idea">
-  **Tip**:  
-  Only add an index to fields you plan to filter on. Unindexed fields save storage and write overhead.
+<Accordions type="multiple">
 
-  If you do enable indexing, you can optionally activate performance-enhancing (but storage-costly) features:
+<Accordion title="Tips">
+
+Only add an index to fields you plan to filter on. Unindexed fields save storage and write overhead.
+
+If you do enable indexing, you can optionally activate performance-enhancing (but storage-costly) features:
 
 - `enable_range_optimization=True` → faster range queries (e.g., `price > 100`)
 - `enable_extended_wildcard=True` → complex string pattern matching (e.g., `name LIKE 'abc%def'`)
-</Callout>
 
-<Accordions type="single">
-  <Accordion title="Code Example">
+</Accordion>
 
-  ```python tab="Python" title="Define a scalar field"
-  import zvec
+<Accordion title="Code Example">
 
-  field_schema = zvec.FieldSchema(  # [!code highlight]
-      name="string_field_example",
-      data_type=zvec.DataType.STRING,
-      nullable=True,
-      # Enables fast filtering; range queries are supported but unoptimized
-      index_param=zvec.InvertIndexParam(enable_range_optimization=False),
-  )
-  ```
+```python tab="Python" title="Define a scalar field"
+import zvec
 
-  ```ts tab="Node.js" title="Define a scalar field"
-  import { ZVecDataType, ZVecFieldSchema, ZVecIndexType } from "@zvec/zvec";
+field_schema = zvec.FieldSchema(  # [!code highlight]
+    name="string_field_example",
+    data_type=zvec.DataType.STRING,
+    nullable=True,
+    # Enables fast filtering; range queries are supported but unoptimized
+    index_param=zvec.InvertIndexParam(enable_range_optimization=False),
+)
+```
 
-  const fieldSchema: ZVecFieldSchema = {  // [!code highlight]
-      name: "string_field_example",
-      dataType: ZVecDataType.STRING,
-      nullable: true,
-      // Enables fast filtering; range queries are supported but unoptimized
-      indexParams: { indexType: ZVecIndexType.INVERT, enableRangeOptimization: false }
-  };
-  ```
+```ts tab="Node.js" title="Define a scalar field"
+import { ZVecDataType, ZVecFieldSchema, ZVecIndexType } from "@zvec/zvec";
 
-  </Accordion>
+const fieldSchema: ZVecFieldSchema = {  // [!code highlight]
+    name: "string_field_example",
+    dataType: ZVecDataType.STRING,
+    nullable: true,
+    // Enables fast filtering; range queries are supported but unoptimized
+    indexParams: { indexType: ZVecIndexType.INVERT, enableRangeOptimization: false }
+};
+```
+
+</Accordion>
+
 </Accordions>
 
-### 3. Vectors (Embeddings)
+<Step>
+
+### Vectors (Embeddings)
+
+</Step>
 
 A vector is defined using `VectorSchema` with the following properties:
 
@@ -119,48 +143,114 @@ A vector is defined using `VectorSchema` with the following properties:
 
 #### Choosing Vector Index Type
 
-The `index_param` field lets you pick the right indexing type for your needs:
-
-- `FlatIndexParam(...)` for [Flat index](../../concepts/vector-index/flat-index/)
-- [`HnswIndexParam(...)`](../../concepts/vector-index/hnsw-index/#index-time-parameters) for [HNSW index](../../concepts/vector-index/hnsw-index/)
-- [`IVFIndexParam(...)`](../../concepts/vector-index/ivf-index/#index-time-parameters) for [IVF index](../../concepts/vector-index/ivf-index/)
-
-Within `index_param` you can also specify:
+The `index_param` allows you to configure the appropriate indexing strategy:
 
 - `metric_type`:  
   `COSINE`, `L2`, or `IP` (inner product) — *Ensure your metric matches how your embeddings were trained!*
 - [`quantize_type`](../../concepts/vector-index/quantization/) (optional):  
   Compress vectors to reduce index size and speed up search (with slight [recall](../../concepts/vector-index/#recall-measuring-approximation-quality) trade-off)
 
-<Accordions type="single">
-  <Accordion title="Code Example">
+<Accordions type="multiple">
 
-  ```python tab="Python" title="Define a vector embedding"
-  import zvec
+<Accordion title="Flat Index Example">
 
-  vector_schema = zvec.VectorSchema(  # [!code highlight]
-      name="dense_vector_example",
-      data_type=zvec.DataType.VECTOR_FP32,
-      dimension=768,
-      index_param=zvec.HnswIndexParam(metric_type=zvec.MetricType.COSINE),
-  )
-  ```
+Use `FlatIndexParam()` for Flat index configuration.
 
-  ```ts tab="Node.js" title="Define a vector embedding"
-  import { ZVecDataType, ZVecIndexType, ZVecMetricType, ZVecVectorSchema } from "@zvec/zvec";
+```python tab="Python" title="Define a vector embedding"
+import zvec
 
-  const vectorSchema: ZVecVectorSchema = {  // [!code highlight]
-      name: "dense_vector_example",
-      dataType: ZVecDataType.VECTOR_FP32,
-      dimension: 768,
-      indexParams: { indexType: ZVecIndexType.HNSW, metricType: ZVecMetricType.COSINE }
-  };
-  ```
+vector_schema = zvec.VectorSchema(  # [!code highlight]
+    name="dense_vector_example",
+    data_type=zvec.DataType.VECTOR_FP32,
+    dimension=768,
+    # [!code word:FlatIndexParam]
+    index_param=zvec.FlatIndexParam(metric_type=zvec.MetricType.COSINE),
+)
+```
 
-  </Accordion>
+```ts tab="Node.js" title="Define a vector embedding"
+import { ZVecDataType, ZVecIndexType, ZVecMetricType, ZVecVectorSchema } from "@zvec/zvec";
+
+const vectorSchema: ZVecVectorSchema = {  // [!code highlight]
+    name: "dense_vector_example",
+    dataType: ZVecDataType.VECTOR_FP32,
+    dimension: 768,
+    // [!code word:FLAT]
+    indexParams: { indexType: ZVecIndexType.FLAT, metricType: ZVecMetricType.COSINE }
+};
+```
+
+</Accordion>
+
+<Accordion title="HNSW Index Example">
+
+Use [`HnswIndexParam()`](../../concepts/vector-index/hnsw-index/#index-time-parameters) for HNSW index configuration.
+
+```python tab="Python" title="Define a vector embedding"
+import zvec
+
+vector_schema = zvec.VectorSchema(  # [!code highlight]
+    name="dense_vector_example",
+    data_type=zvec.DataType.VECTOR_FP32,
+    dimension=768,
+    # [!code word:HnswIndexParam]
+    index_param=zvec.HnswIndexParam(
+        metric_type=zvec.MetricType.COSINE, ef_construction=700
+    ),
+)
+```
+
+```ts tab="Node.js" title="Define a vector embedding"
+import { ZVecDataType, ZVecIndexType, ZVecMetricType, ZVecVectorSchema } from "@zvec/zvec";
+
+const vectorSchema: ZVecVectorSchema = {  // [!code highlight]
+    name: "dense_vector_example",
+    dataType: ZVecDataType.VECTOR_FP32,
+    dimension: 768,
+    // [!code word:HNSW]
+    indexParams: { indexType: ZVecIndexType.HNSW, metricType: ZVecMetricType.COSINE, efConstruction: 700 }
+};
+```
+
+</Accordion>
+
+<Accordion title="IVF Index Example">
+
+Use [`IVFIndexParam()`](../../concepts/vector-index/ivf-index/#index-time-parameters) for IVF index configuration.
+
+```python tab="Python" title="Define a vector embedding"
+import zvec
+
+vector_schema = zvec.VectorSchema(  # [!code highlight]
+    name="dense_vector_example",
+    data_type=zvec.DataType.VECTOR_FP32,
+    dimension=768,
+    # [!code word:IVFIndexParam]
+    index_param=zvec.IVFIndexParam(metric_type=zvec.MetricType.COSINE, n_list=1000),
+)
+```
+
+```ts tab="Node.js" title="Define a vector embedding"
+import { ZVecDataType, ZVecIndexType, ZVecMetricType, ZVecVectorSchema } from "@zvec/zvec";
+
+const vectorSchema: ZVecVectorSchema = {  // [!code highlight]
+    name: "dense_vector_example",
+    dataType: ZVecDataType.VECTOR_FP32,
+    dimension: 768,
+    // [!code word:IVF]
+    indexParams: { indexType: ZVecIndexType.IVF, metricType: ZVecMetricType.COSINE, nList: 1000 }
+};
+```
+
+</Accordion>
+
 </Accordions>
 
+<Step>
+
 ### Full Schema Example
+
+</Step>
 
 <Accordions type="single">
   <Accordion title="Code Example">
@@ -216,9 +306,15 @@ Within `index_param` you can also specify:
   </Accordion>
 </Accordions>
 
+</Steps>
+
 ---
 
-## Step 2: Configure Collection Options
+<Step>
+
+## Configure Collection Options
+
+</Step>
 
 The `CollectionOption` lets you control runtime behavior when creating the collection:
 
@@ -242,7 +338,11 @@ const collectionOptions: ZVecCollectionOptions = { readOnly: false, enableMMAP: 
 
 ---
 
-## Step 3: Create and Open the Collection
+<Step>
+
+## Create and Open a Collection
+
+</Step>
 
 With your schema and options ready, call `create_and_open()` to create the collection at the desired `path`:
 
@@ -267,6 +367,8 @@ const collection = ZVecCreateAndOpen(   // [!code highlight]
 ```
 
 The returned `collection` object is immediately ready for inserting documents, running queries, or managing data.
+
+</Steps>
 
 ---
 

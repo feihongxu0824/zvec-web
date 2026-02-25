@@ -7,10 +7,11 @@ nodejsApiReference: /api-reference/nodejs/classes/ZVecCollection#updatesync
 
 
 import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
 
 Use `update()` to modify **existing** [documents](../../concepts/data-modeling/#documents) (`Doc`).
 
-Only the scalar fields and vector embeddings you include will be updated; all other content remains unchanged.
+Only the scalar fields and vector embeddings you **include will be updated**; all other content remains unchanged.
 
 The method accepts either a single `Doc` object or a list of `Doc` objects.
 
@@ -22,8 +23,8 @@ Each `Doc` passed to `update()` must:
 
 - Specify an `id` that **already exists** in the collection (the operation will fail if the document is not found)
 - Include only the fields and vectors you **intend to update**, formatted according to the collection's [schema](../../collections/create/#define-a-collection-schema):
-  1. **Scalar fields** go in the `fields` dictionary (field names as keys)
-  1. **Vector embeddings** go in the `vectors` dictionary (vector names as keys)
+  1. **Scalar fields**: provided as key–value pairs under `fields` (scalar field names as keys)
+  1. **Vector embeddings**: provided as key–value pairs under `vectors` (vector names as keys)
 - Omit any scalar fields or vectors you do not want to change — they will be left untouched.
 
 ---
@@ -43,7 +44,7 @@ Assume you already have a collection with the following schema:
 <Accordions type="single">
   <Accordion title="Code Example">
 
-  ```python title="Open a collection"
+  ```python tab="Python" title="Open a collection"
   import zvec
 
   collection_schema = zvec.CollectionSchema(  # [!code highlight]
@@ -82,10 +83,53 @@ Assume you already have a collection with the following schema:
   collection = zvec.open(path="/path/to/example/collection")  # [!code highlight]
   ```
 
+  ```ts tab="Node.js" title="Open a collection"
+  import { ZVecCollection, ZVecCollectionSchema, ZVecDataType, ZVecIndexType, ZVecMetricType, ZVecOpen } from "@zvec/zvec";
+
+  const collectionSchema: ZVecCollectionSchema = new ZVecCollectionSchema({   // [!code highlight]
+      name: "example_collection",
+      fields: [
+          {
+              name: "book_title",
+              dataType: ZVecDataType.STRING,
+              indexParams: { indexType: ZVecIndexType.INVERT, enableRangeOptimization: false }
+          },
+          {
+              name: "category",
+              dataType: ZVecDataType.ARRAY_STRING
+          },
+          {
+              name: "publish_year",
+              dataType: ZVecDataType.INT32,
+              indexParams: { indexType: ZVecIndexType.INVERT, enableRangeOptimization: true }
+          }
+      ],
+      vectors: [
+          {
+              name: "dense_embedding",
+              dataType: ZVecDataType.VECTOR_FP32,
+              dimension: 768,
+              indexParams: { indexType: ZVecIndexType.HNSW, metricType: ZVecMetricType.COSINE }
+          },
+          {
+              name: "sparse_embedding",
+              dataType: ZVecDataType.SPARSE_VECTOR_FP32,
+              indexParams: { indexType: ZVecIndexType.HNSW, metricType: ZVecMetricType.IP }
+          }
+      ]
+  });
+
+  const collection: ZVecCollection = ZVecOpen("/path/to/example/collection");   // [!code highlight]
+  ```
+
   </Accordion>
 </Accordions>
 
 To update an existing document, provide its `id` and only the fields or vectors you want to change:
+
+<Tabs items={['Python', 'Node.js']}>
+
+<Tab value="Python">
 
 ```python title="Update a document"
 import zvec
@@ -115,12 +159,63 @@ print(result)  # {"code": 0} means success
 ```
 
 <Callout className="text-base" type="info">
-  The `update()` method returns a single `Status` object for one document.
-  - `{"code": 0}` indicates success.
-  - Non-zero codes indicate failure.
 
-  Successfully updated documents are immediately available for querying 🚀.
+The `update()` method validates the document first:
+
+- **Incorrect usage** — such as an unknown field or wrong vector dimension — **raises an exception**.
+- **If validation passes**, the method proceeds with the update and returns a `Status` object:
+  - `{"code": 0}` indicates success.
+  - Non-zero codes indicate failure (e.g., non-existing `ID`).
+
+Successfully updated documents are immediately available for querying 🚀.
+
 </Callout>
+
+</Tab>
+
+<Tab value="Node.js">
+
+```ts title="Update a document"
+let doc: ZVecDocInput = {   // [!code highlight]
+    id: "book_1", // ← must already exist in the collection
+    vectors: {
+        "sparse_embedding": { // ← replaces entire sparse vector
+            35: 0.25,
+            237: 0.1,
+            369: 0.44
+        }
+    },
+    fields: {
+        "category": [ // ← replaces current category list
+            "Romance",
+            "Classic Literature",
+            "American Civil War"
+        ]
+    }
+    // Note: `book_title`, `publish_year`, and `dense_embedding` are omitted → they stay as-is
+};
+
+// Update the document
+let result = collection.updateSync(doc);  // [!code highlight]
+console.log(result);  // { ok: true } means success
+```
+
+<Callout className="text-base" type="info">
+
+The `update()` method validates the document first:
+
+- **Incorrect usage** — such as an unknown field or wrong vector dimension — **raises an exception**.
+- **If validation passes**, the method proceeds with the update and returns a `Status` object:
+  - `{ ok: true }` indicates success.
+  - `{ ok: false }` indicates failure (e.g., non-existing `ID`).
+
+Successfully updated documents are immediately available for querying 🚀.
+
+</Callout>
+
+</Tab>
+
+</Tabs>
 
 ---
 
@@ -129,7 +224,7 @@ print(result)  # {"code": 0} means success
 To update multiple documents at once, pass a list of `Doc` objects to `update()`.  
 Each `Doc` is processed independently, and the method returns a list of `Status` objects — one per document.
 
-```python title="Update a batch of documents"
+```python tab="Python" title="Update a batch of documents"
 import zvec
 
 results = collection.update(  # [!code highlight]
@@ -162,7 +257,35 @@ results = collection.update(  # [!code highlight]
 print(results)  # [{"code":0}, {"code":0}, {"code":0}]
 ```
 
+```ts tab="Node.js" title="Update a batch of documents"
+let result = collection.updateSync([  // [!code highlight]
+    {
+        id: "book_1",
+        vectors: { "sparse_embedding": { 35: 0.25, 237: 0.1, 369: 0.44 } },
+        fields: { "category": ["Romance", "Classic Literature", "American Civil War"] }
+    },
+    {
+        id: "book_2",
+        fields: { "book_title": "The Great Gatsby" }
+    },
+    {
+        id: "book_3",
+        fields: {
+            "book_title": "A Tale of Two Cities",
+            "publish_year": 1859
+        }
+    }
+]);
+
+console.log(result);  // [ { ok: true }, { ok: true }, { ok: true } ]
+```
+
 <Callout className="text-base" type="info">
-  A failure in one document (e.g., the `id` doesn't exist ) does not stop the others from being updated.  
+
+  If any document in the batch has incorrect usage (e.g., an unknown field or wrong vector dimension), the method raises an exception and **no documents are updated**.
+
+  If all documents are valid, the method attempts to update every one. A failure in one (e.g., the `id` doesn't exist) does **not** stop others from being updated.
+
   🔍 **Always check each `Status` in the result list.**
+
 </Callout>

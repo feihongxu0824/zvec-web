@@ -179,7 +179,7 @@ The `insert()` method validates the document first:
 - **Incorrect usage** — such as an unknown field or wrong vector dimension — **raises an exception**.
 - **If validation passes**, the method proceeds with the insertion and returns a `Status` object:
   - `{ ok: true }` indicates success.
-  - `{ ok: false }` indicate failure (e.g., duplicate `ID`, insufficient disk space).
+  - `{ ok: false }` indicates failure (e.g., duplicate `ID`, insufficient disk space).
 
 Successfully inserted documents are immediately available for querying 🚀.
 
@@ -245,11 +245,13 @@ console.log(result);  // [ { ok: true }, { ok: true }, { ok: true } ]
 ```
 
 <Callout className="text-base" type="info">
+
   If any document in the batch has incorrect usage (e.g., an unknown field or wrong vector dimension), the method raises an exception and **no documents are inserted**.
 
   If all documents are valid, the method attempts to insert every one. A failure in one (e.g., duplicate `id`) does **not** stop others from being inserted.
 
   🔍 **Always check each `Status` in the result list.**
+
 </Callout>
 
 ---
@@ -335,8 +337,10 @@ console.log(result);  // { ok: true }
 ```
 
 <Callout className="text-base" type="info">
+
   A sparse vector is represented as a mapping from `dimension indices` (integers) to `values` (floats).  
   There is **no fixed dimension size** — only non-zero dimensions need to be included.
+
 </Callout>
 
 ---
@@ -476,7 +480,7 @@ let doc: ZVecDocInput = {   // [!code highlight]
     }
 };
 
-// Insert the document;
+// Insert the document
 let result = collection.insertSync(doc);  // [!code highlight]
 console.log(result);  // { ok: true } means success
 ```

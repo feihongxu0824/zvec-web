@@ -7,8 +7,9 @@ nodejsApiReference: /api-reference/nodejs/classes/ZVecCollection#upsertsync
 
 
 import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
 
-`upsert()` works just like `insert()` — it adds one or more new [documents](../../concepts/data-modeling/#documents) (`Doc`) to a [collection](../../collections/).
+`upsert()` works similar to `insert()` — it adds one or more new [documents](../../concepts/data-modeling/#documents) (`Doc`) to a [collection](../../collections/).
 
 The key difference is that if a document with the same `id` already exists, it will be **overwritten**.
 
@@ -30,8 +31,8 @@ Each `Doc` passed to `upsert()` must:
 
 - Have an `id` (if a document with the same `id` already exists, it will be replaced)
 - Provide data that matches the collection's [schema](../../collections/create/#define-a-collection-schema):
-  1. **Scalar fields** go in the `fields` dictionary (field names as keys)
-  1. **Vector embeddings** go in the `vectors` dictionary (vector names as keys)
+  1. **Scalar fields**: provided as key–value pairs under `fields` (scalar field names as keys)
+  1. **Vector embeddings**: provided as key–value pairs under `vectors` (vector names as keys)
 - You can omit `nullable` scalar fields if a document doesn't have a value for them
 
 ---
@@ -51,7 +52,7 @@ You've also opened the collection and have a `collection` object ready.
 <Accordions type="single">
   <Accordion title="Code Example">
 
-  ```python title="Open a collection"
+  ```python tab="Python" title="Open a collection"
   import zvec
 
   collection_schema = zvec.CollectionSchema(  # [!code highlight]
@@ -76,10 +77,45 @@ You've also opened the collection and have a `collection` object ready.
   collection = zvec.open(path="/path/to/example/collection")  # [!code highlight]
   ```
 
+  ```ts tab="Node.js" title="Open a collection"
+  import { ZVecCollection, ZVecCollectionSchema, ZVecDataType, ZVecIndexType, ZVecMetricType, ZVecOpen } from "@zvec/zvec";
+
+  const collectionSchema: ZVecCollectionSchema = new ZVecCollectionSchema({   // [!code highlight]
+      name: "example_collection",
+      fields: [
+          {
+              name: "text",
+              dataType: ZVecDataType.STRING,
+              indexParams: {
+                  indexType: ZVecIndexType.INVERT,
+                  enableRangeOptimization: false
+              }
+          }
+      ],
+      vectors: [
+          {
+              name: "text_embedding",
+              dataType: ZVecDataType.VECTOR_FP32,
+              dimension: 4,
+              indexParams: {
+                  indexType: ZVecIndexType.HNSW,
+                  metricType: ZVecMetricType.COSINE
+              }
+          }
+      ]
+  });
+
+  const collection: ZVecCollection = ZVecOpen("/path/to/example/collection");   // [!code highlight]
+  ```
+
   </Accordion>
 </Accordions>
 
 Now, upsert a document like this:
+
+<Tabs items={['Python', 'Node.js']}>
+
+<Tab value="Python">
 
 ```python title="Upsert a document"
 import zvec
@@ -102,12 +138,58 @@ print(result)  # {"code": 0} means success
 ```
 
 <Callout className="text-base" type="info">
-  The `upsert()` method returns a `Status` object for single-document upsertion.
-  - `{"code": 0}` indicates success.
-  - Non-zero codes indicate failure.
 
-  Successfully upserted documents are immediately available for querying 🚀.
+The `upsert()` method validates the document first:
+
+- **Incorrect usage** — such as an unknown field or wrong vector dimension — **raises an exception**.
+- **If validation passes**, the method proceeds with the upsertion and returns a `Status` object:
+  - `{"code": 0}` indicates success.
+  - Non-zero codes indicate failure (e.g., insufficient disk space).
+
+Successfully upserted documents are immediately available for querying 🚀.
+
 </Callout>
+
+</Tab>
+
+<Tab value="Node.js">
+
+```ts title="Upsert a document"
+import { ZVecCollection, ZVecDocInput, ZVecOpen } from "@zvec/zvec";
+
+// Create a document
+let doc: ZVecDocInput = { // [!code highlight]
+    id: "text_1",   // ← must be unique
+    vectors: {
+        "text_embedding": [0.1, 0.2, 0.3, 0.4]  // ← must match the vector name
+                          // ↑ list of floats; list length = dimension (4)
+    },
+    fields: {
+        "text": "This is a sample text."    // ← must match the scalar field name
+    }
+};
+
+// Upsert the document
+let result = collection.upsertSync(doc);  // [!code highlight]
+console.log(result);  // { ok: true } means success
+```
+
+<Callout className="text-base" type="info">
+
+The `upsert()` method validates the document first:
+
+- **Incorrect usage** — such as an unknown field or wrong vector dimension — **raises an exception**.
+- **If validation passes**, the method proceeds with the upsertion and returns a `Status` object:
+  - `{ ok: true }` indicates success.
+  - `{ ok: false }` indicates failure (e.g., insufficient disk space).
+
+Successfully upserted documents are immediately available for querying 🚀.
+
+</Callout>
+
+</Tab>
+
+</Tabs>
 
 ---
 
@@ -116,7 +198,7 @@ print(result)  # {"code": 0} means success
 To upsert multiple documents at once, pass a list of `Doc` objects to `upsert()`.  
 Each `Doc` is processed independently, and the method returns a list of `Status` objects — one per document.
 
-```python title="Upsert a batch of documents"
+```python tab="Python" title="Upsert a batch of documents"
 import zvec
 
 result = collection.upsert(  # [!code highlight]
@@ -142,9 +224,36 @@ result = collection.upsert(  # [!code highlight]
 print(result)  # [{"code":0}, {"code":0}, {"code":0}]
 ```
 
+```ts tab="Node.js" title="Upsert a batch of documents"
+let result = collection.upsertSync([  // [!code highlight]
+    {
+        id: "text_1",
+        vectors: { "text_embedding": [0.1, 0.2, 0.3, 0.4] },
+        fields: { "text": "This is a sample text." },
+    },
+    {
+        id: "text_2",
+        vectors: { "text_embedding": [0.4, 0.3, 0.2, 0.1] },
+        fields: { "text": "This is another sample text." },
+    },
+    {
+        id: "text_3",
+        vectors: { "text_embedding": [-0.1, -0.2, -0.3, -0.4] },
+        fields: { "text": "One more sample text." },
+    }
+]);
+
+console.log(result);  // [ { ok: true }, { ok: true }, { ok: true } ]
+```
+
 <Callout className="text-base" type="info">
-  A failure in one document (e.g., missing a required field or invalid data type) does not stop the others from being upserted.  
+
+  If any document in the batch has incorrect usage (e.g., an unknown field or wrong vector dimension), the method raises an exception and **no documents are upserted**.
+
+  If all documents are valid, the method attempts to upsert every one. A failure in one (e.g., insufficient disk space) does **not** stop others from being upserted.
+
   🔍 **Always check each `Status` in the result list.**
+
 </Callout>
 
 ---
@@ -156,7 +265,7 @@ Assume your collection includes a [sparse vector](../../concepts/vector-embeddin
 <Accordions type="single">
   <Accordion title="Code Example">
 
-  ```python title="Open a collection"
+  ```python tab="Python" title="Open a collection"
   import zvec
 
   collection_schema = zvec.CollectionSchema(  # [!code highlight]
@@ -173,12 +282,29 @@ Assume your collection includes a [sparse vector](../../concepts/vector-embeddin
   collection = zvec.open(path="/path/to/example/collection")  # [!code highlight]
   ```
 
+  ```ts tab="Node.js" title="Open a collection"
+  import { ZVecCollection, ZVecCollectionSchema, ZVecDataType, ZVecIndexType, ZVecMetricType, ZVecOpen } from "@zvec/zvec";
+
+  const collectionSchema: ZVecCollectionSchema = new ZVecCollectionSchema({   // [!code highlight]
+      name: "example_collection",
+      vectors: [
+          {
+              name: "sparse_embedding",
+              dataType: ZVecDataType.SPARSE_VECTOR_FP32,
+              indexParams: { indexType: ZVecIndexType.HNSW, metricType: ZVecMetricType.IP }
+          }
+      ]
+  });
+
+  const collection: ZVecCollection = ZVecOpen("/path/to/example/collection");   // [!code highlight]
+  ```
+
   </Accordion>
 </Accordions>
 
 Upsert a document with a sparse vector like this:
 
-```python title="Upsert a document with a sparse vector"
+```python tab="Python" title="Upsert a document with a sparse vector"
 import zvec
 
 result = collection.upsert(  # [!code highlight]
@@ -188,7 +314,7 @@ result = collection.upsert(  # [!code highlight]
             "sparse_embedding": {
                 42: 1.25,  # ← dimension 42 has weight 1.25
                 1337: 0.8,  # ← dimension 1337 has weight 0.8
-                2999: 0.63,  # ← dimension 1999 has weight 0.63
+                2999: 0.63,  # ← dimension 2999 has weight 0.63
             }
         },
     )
@@ -197,17 +323,33 @@ result = collection.upsert(  # [!code highlight]
 print(result)  # {"code":0}
 ```
 
+```ts tab="Node.js" title="Upsert a document with a sparse vector"
+let result = collection.upsertSync({  // [!code highlight]
+    id: "text_1",
+    vectors: {
+        "sparse_embedding": {
+            42: 1.25,   // ← dimension 42 has weight 1.25
+            1337: 0.8,  // ← dimension 1337 has weight 0.8
+            2999: 0.63  // ← dimension 2999 has weight 0.63
+        }
+    }
+});
+
+console.log(result);  // { ok: true }
+```
+
 <Callout className="text-base" type="info">
-  A sparse vector is represented as a dictionary `dict[int, float]`.  
+
+  A sparse vector is represented as a mapping from `dimension indices` (integers) to `values` (floats).  
   There is **no fixed dimension size** — only non-zero dimensions need to be included.
+
 </Callout>
 
 ---
 
 ## Upsert Documents with Multiple Fields and Vectors
 
-Real-world applications often require collections with multiple scalar fields and vector embeddings.  
-In this example, assume your collection includes the following schema:
+Real-world applications often require collections with multiple scalar fields and vector embeddings. In this example, assume your collection includes the following schema:
 
 - **Scalar fields**:
   1. `book_title` (string)
@@ -220,7 +362,7 @@ In this example, assume your collection includes the following schema:
 <Accordions type="single">
   <Accordion title="Code Example">
 
-  ```python title="Open a collection"
+  ```python tab="Python" title="Open a collection"
   import zvec
 
   collection_schema = zvec.CollectionSchema(  # [!code highlight]
@@ -259,12 +401,51 @@ In this example, assume your collection includes the following schema:
   collection = zvec.open(path="/path/to/example/collection")  # [!code highlight]
   ```
 
+  ```ts tab="Node.js" title="Open a collection"
+  import { ZVecCollection, ZVecCollectionSchema, ZVecDataType, ZVecIndexType, ZVecMetricType, ZVecOpen } from "@zvec/zvec";
+
+  const collectionSchema: ZVecCollectionSchema = new ZVecCollectionSchema({   // [!code highlight]
+      name: "example_collection",
+      fields: [
+          {
+              name: "book_title",
+              dataType: ZVecDataType.STRING,
+              indexParams: { indexType: ZVecIndexType.INVERT, enableRangeOptimization: false }
+          },
+          {
+              name: "category",
+              dataType: ZVecDataType.ARRAY_STRING
+          },
+          {
+              name: "publish_year",
+              dataType: ZVecDataType.INT32,
+              indexParams: { indexType: ZVecIndexType.INVERT, enableRangeOptimization: true }
+          }
+      ],
+      vectors: [
+          {
+              name: "dense_embedding",
+              dataType: ZVecDataType.VECTOR_FP32,
+              dimension: 768,
+              indexParams: { indexType: ZVecIndexType.HNSW, metricType: ZVecMetricType.COSINE }
+          },
+          {
+              name: "sparse_embedding",
+              dataType: ZVecDataType.SPARSE_VECTOR_FP32,
+              indexParams: { indexType: ZVecIndexType.HNSW, metricType: ZVecMetricType.IP }
+          }
+      ]
+  });
+
+  const collection: ZVecCollection = ZVecOpen("/path/to/example/collection");   // [!code highlight]
+  ```
+
   </Accordion>
 </Accordions>
 
 Upsert a document with multiple fields and vectors like this:
 
-```python title="Upsert a document with multiple fields and vectors"
+```python tab="Python" title="Upsert a document with multiple fields and vectors"
 import zvec
 
 # Create a document
@@ -284,4 +465,24 @@ doc = zvec.Doc(  # [!code highlight]
 # Upsert the document
 result = collection.upsert(doc)  # [!code highlight]
 print(result)  # {"code": 0} means success
+```
+
+```ts tab="Node.js" title="Upsert a document with multiple fields and vectors"
+// Create a document
+let doc: ZVecDocInput = {   // [!code highlight]
+    id: "book_1",
+    vectors: {
+        "dense_embedding": Array(768).fill(0.1),  // ← use real embedding in practice
+        "sparse_embedding": { 42: 1.25, 1337: 0.8, 1999: 0.64 } // ← use real embedding in practice
+    },
+    fields: {
+        "book_title": "Gone with the Wind",   // ← string
+        "category": ["Romance", "Classic Literature"],  // ← array of strings
+        "publish_year": 1936  // ← integer
+    }
+};
+
+// Upsert the document
+let result = collection.upsertSync(doc);  // [!code highlight]
+console.log(result);  // { ok: true } means success
 ```

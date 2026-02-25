@@ -47,14 +47,13 @@ This guide assumes you have opened a collection and have a `collection` object r
 
   This example collection includes a scalar field `publish_year`.
 
-  ```python title="Open a collection"
+  ```python tab="Python" title="Open a collection"
   import zvec
 
   collection_schema = zvec.CollectionSchema(  # [!code highlight]
       name="example_collection",
-      fields=[
-          zvec.FieldSchema(name="publish_year", data_type=zvec.DataType.INT64),  # [!code highlight]
-      ],
+      # [!code word:publish_year]
+      fields=[zvec.FieldSchema(name="publish_year", data_type=zvec.DataType.INT64)],
       vectors=[
           zvec.VectorSchema(
               name="dense_embedding",
@@ -68,6 +67,26 @@ This guide assumes you have opened a collection and have a `collection` object r
   collection = zvec.open(path="/path/to/collection")  # [!code highlight]
   ```
 
+  ```ts tab="Node.js" title="Open a collection"
+  import { ZVecCollection, ZVecCollectionSchema, ZVecDataType, ZVecIndexType, ZVecMetricType, ZVecOpen } from "@zvec/zvec";
+
+  const collectionSchema: ZVecCollectionSchema = new ZVecCollectionSchema({   // [!code highlight]
+      name: "example_collection",
+      // [!code word:publish_year]
+      fields: [{ name: "publish_year", dataType: ZVecDataType.INT64 }],
+      vectors: [
+          {
+              name: "dense_embedding",
+              dataType: ZVecDataType.VECTOR_FP32,
+              dimension: 768,
+              indexParams: { indexType: ZVecIndexType.HNSW, metricType: ZVecMetricType.COSINE },
+          }
+      ]
+  });
+
+  const collection: ZVecCollection = ZVecOpen("/path/to/collection");   // [!code highlight]
+  ```
+
   </Accordion>
 </Accordions>
 
@@ -79,11 +98,18 @@ This guide assumes you have opened a collection and have a `collection` object r
 
 To add a new scalar field to an existing collection, use `add_column()`:
 
-```python title="Add a column"
+```python tab="Python" title="Add a column"
 import zvec
 
 new_field = zvec.FieldSchema(name="rating", data_type=zvec.DataType.INT32)
 collection.add_column(field_schema=new_field, expression="5")  # [!code highlight]
+```
+
+```ts tab="Node.js" title="Add a column"
+import { ZVecCollection, ZVecDataType, ZVecFieldSchema, ZVecOpen } from "@zvec/zvec";
+
+const newField: ZVecFieldSchema = { name: "rating", dataType: ZVecDataType.INT32 };
+collection.addColumnSync({ fieldSchema: newField, expression: "5" });   // [!code highlight]
 ```
 
 - `field_schema`:  
@@ -100,9 +126,14 @@ collection.add_column(field_schema=new_field, expression="5")  # [!code highligh
 
 To permanently remove a scalar field, use `drop_column()`:
 
-```python title="Drop a column"
+```python tab="Python" title="Drop a column"
 # [!code word:drop_column]
 collection.drop_column(field_name="publish_year")
+```
+
+```ts tab="Node.js" title="Drop a column"
+// [!code word:dropColumnSync]
+collection.dropColumnSync("publish_year");
 ```
 
 <Callout className="text-base" type="warn">
@@ -113,7 +144,7 @@ collection.drop_column(field_name="publish_year")
 
 To rename a column or update its schema, use `alter_column()`:
 
-```python title="Alter a column"
+```python tab="Python" title="Alter a column"
 # Rename
 collection.alter_column(old_name="publish_year", new_name="release_year")   # [!code highlight]
 
@@ -122,12 +153,25 @@ updated = zvec.FieldSchema(name="rating", data_type=zvec.DataType.FLOAT)
 collection.alter_column(field_schema=updated)                               # [!code highlight]
 ```
 
+```ts tab="Node.js" title="Alter a column"
+// Rename
+collection.alterColumnSync({ columnName: "publish_year", newColumnName: "release_year" });  // [!code highlight]
+
+// Change type (if compatible)
+const updated: ZVecFieldSchema = { name: "rating", dataType: ZVecDataType.FLOAT };
+collection.alterColumnSync({ columnName: "rating", fieldSchema: updated });                 // [!code highlight]
+```
+
 ### View the Current Schema
 
 After making changes, you can always check your collection's current structure by printing its schema:
 
-```python title="View the current schema"
+```python tab="Python" title="View the current schema"
 print(collection.schema)
+```
+
+```ts tab="Node.js" title="View the current schema"
+console.log(collection.schema.toString());
 ```
 
 See [schema example](../inspect/#collection-schema) for more details.
@@ -138,7 +182,7 @@ See [schema example](../inspect/#collection-schema) for more details.
 
 To accelerate search performance, you can create (or replace) indexes on both **vector** and **scalar** fields using `create_index()`:
 
-```python title="Create an index"
+```python tab="Python" title="Create an index"
 import zvec
 
 # Replace the existing HNSW index with a FLAT index
@@ -154,6 +198,20 @@ collection.create_index(  # [!code highlight]
 )
 ```
 
+```ts tab="Node.js" title="Create an index"
+// Replace the existing HNSW index with a FLAT index
+collection.createIndexSync({  // [!code highlight]
+    fieldName: "dense_embedding",
+    indexParams: { indexType: ZVecIndexType.FLAT, metricType: ZVecMetricType.COSINE }
+});
+
+// Create an inverted index
+collection.createIndexSync({  // [!code highlight]
+    fieldName: "publish_year",
+    indexParams: { indexType: ZVecIndexType.INVERT }
+});
+```
+
 - **Vector fields** must use one of the following index types:
   - [`HnswIndexParam`](../../concepts/vector-index/hnsw-index/#index-time-parameters)
   - [`IVFIndexParam`](../../concepts/vector-index/ivf-index/#index-time-parameters)
@@ -164,8 +222,14 @@ collection.create_index(  # [!code highlight]
 
 To remove an index from a scalar field, use `drop_index()`:
 
-```python title="Drop an index"
+```python tab="Python" title="Drop an index"
+# [!code word:drop_index]
 collection.drop_index(field_name="publish_year")
+```
+
+```ts tab="Node.js" title="Drop an index"
+// [!code word:dropIndexSync]
+collection.dropIndexSync("publish_year");
 ```
 
 <Callout className="text-base" type="info">

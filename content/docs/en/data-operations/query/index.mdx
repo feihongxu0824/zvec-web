@@ -6,18 +6,87 @@ nodejsApiReference: /api-reference/nodejs/classes/ZVecCollection#querysync
 ---
 
 
+import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
 import { Combine,  Filter, Layers, Search } from 'lucide-react';
 
 The `query()` method supports **vector similarity search**, **conditional filtering** (like a SQL `WHERE` clause), or **both combined in a hybrid query**.
 
 It returns a list of `Doc` objects, each containing the matched [document](../../concepts/data-modeling/#documents) and its relevance score.
 
-<Callout className="text-base" type="info">
+---
 
-- Use [`VectorQuery`](./single-vector/#vectorquery) objects for vector similarity search
-- Use a filter expression string (e.g., `status = 'published'`) for conditional filtering
+## `Query`
 
-</Callout>
+In Zvec, all queries are performed by passing parameters through a `Query` object to the `query()` method.
+
+<Tabs items={['Python', 'Node.js']}>
+
+<Tab value="Python">
+
+Each `VectorQuery` specifies:
+
+1. `field_name`: The name of the vector field to search
+1. **Query source** (exactly one required):
+      - An explicit `vector`, **or**
+      - a document `id` (to reuse the stored embedding of an existing document)
+      <Callout className="text-base" type="info">
+        You must provide **exactly one** of `vector` or `id`. Specifying both will raise an error.
+      </Callout>
+1. `param` (optional): Index-specific query parameters (e.g., `ef` for [HNSW](../../concepts/vector-index/hnsw-index/#query-time-parameters))
+
+<Accordions type="single">
+
+<Accordion title="Code Example">
+
+```python title="VectorQuery"
+import zvec
+
+vector_query = zvec.VectorQuery(  # [!code highlight]
+    field_name="dense_embedding",
+    vector=[0.1] * 768,  # Use real embedding in practice
+)
+
+by_id_query = zvec.VectorQuery(  # [!code highlight]
+    field_name="dense_embedding",
+    id="doc123",  # Use the 'dense_embedding' from the document with ID "doc123"
+)
+```
+
+</Accordion>
+
+</Accordions>
+
+</Tab>
+
+<Tab value="Node.js">
+
+Each `ZVecQuery` specifies:
+
+1. `fieldName`: The name of the vector field to search
+1. `vector`: The query vector
+1. `params` (optional): Index-specific query parameters (e.g., `ef` for [HNSW](../../concepts/vector-index/hnsw-index/#query-time-parameters))
+
+<Accordions type="single">
+
+<Accordion title="Code Example">
+
+```ts title="ZVecQuery"
+import { ZVecQuery } from "@zvec/zvec";
+
+let vector_query: ZVecQuery = {   // [!code highlight]
+    fieldName: "dense_embedding",
+    vector: Array(768).fill(0.1)  // Use real embedding in practice
+};
+```
+
+</Accordion>
+
+</Accordions>
+
+</Tab>
+
+</Tabs>
 
 ---
 
@@ -56,21 +125,29 @@ It returns a list of `Doc` objects, each containing the matched [document](../..
 
 ### Single-Vector Search
 
-```python
+```python tab="Python"
 import zvec
 
 result = collection.query(  # [!code highlight]
     vectors=zvec.VectorQuery(
         field_name="dense_embedding",
-        vector=[0.1] * 768,  # Replace with a real 768-dim embedding in practice
+        vector=[0.1] * 768,  # Use real embedding in practice
     ),
     topk=10,
 )
 ```
 
+```ts tab="Node.js"
+let result = collection.querySync({   // [!code highlight]
+    fieldName: "dense_embedding",
+    vector: Array(768).fill(0.1),   // Use real embedding in practice
+    topk: 10,
+});
+```
+
 ### Multi-Vector Search
 
-```python
+```python tab="Python"
 import zvec
 
 result = collection.query(  # [!code highlight]
@@ -93,22 +170,38 @@ print(result)
 
 ### Conditional Filtering
 
-```python
+```python tab="Python"
 # [!code word:filter]
-results = collection.query(filter="publish_year < 1999", topk=50)
+result = collection.query(filter="publish_year < 1999", topk=50)
+```
+
+```ts tab="Node.js"
+// [!code word:filter]
+let result = collection.querySync({ filter: "publish_year < 1999", topk: 50 });
 ```
 
 ### Hybrid Search
 
-```python
+```python tab="Python"
 import zvec
 
 result = collection.query(          # [!code highlight]
     vectors=zvec.VectorQuery(
         field_name="dense_embedding",
-        vector=[0.1] * 768,  # Replace with a real 768-dim embedding in practice
+        vector=[0.1] * 768,  # Use real embedding in practice
     ),
-    filter="publish_year < 1999",   # [!code highlight]
+    # [!code word:filter]
+    filter="publish_year < 1999",
     topk=10,
 )
+```
+
+```ts tab="Node.js"
+let result = collection.querySync({   // [!code highlight]
+    fieldName: "dense_embedding",
+    vector: Array(768).fill(0.1), // Use real embedding in practice
+    // [!code word:filter]
+    filter: "publish_year < 1999",
+    topk: 10
+});
 ```

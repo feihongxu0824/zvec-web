@@ -29,10 +29,16 @@ Assume you've already opened a collection and have a `collection` object ready.
 <Accordions type="single">
   <Accordion title="Code Example">
 
-  ```python title="Open a collection"
+  ```python tab="Python" title="Open a collection"
   import zvec
 
   collection = zvec.open(path="/path/to/example/collection")  # [!code highlight]
+  ```
+
+  ```ts tab="Node.js" title="Open a collection"
+  import { ZVecCollection, ZVecOpen } from "@zvec/zvec";
+
+const collection: ZVecCollection = ZVecOpen("/path/to/example/collection");   // [!code highlight]
   ```
 
   </Accordion>
@@ -40,7 +46,7 @@ Assume you've already opened a collection and have a `collection` object ready.
 
 Use `delete()` to remove one or more documents when you know their exact IDs.
 
-```python title="Delete documents by IDs"
+```python tab="Python" title="Delete documents by IDs"
 # Delete a single document
 result = collection.delete(ids="doc_id_1")              # [!code highlight]
 print(result)  # {"code":0} means success
@@ -50,11 +56,19 @@ result = collection.delete(ids=["doc_id_2", "doc_id_3"])    # [!code highlight]
 print(result)  # [{"code":0}, {"code":0}]
 ```
 
+```ts tab="Node.js" title="Delete documents by IDs"
+// Delete a single document
+let result = collection.deleteSync("doc_id_1");   // [!code highlight]
+console.log(result);  // { ok: true } means success
+
+// Delete multiple documents at once
+let results = collection.deleteSync(["doc_id_2", "doc_id_3"]);  // [!code highlight]
+console.log(results);   // [ { ok: true }, { ok: true } ]
+```
+
 <Callout className="text-base" type="info">
   - When given a single `id`, `delete()` returns one `Status` object.
   - When given a list of `id`s, it returns a list of `Status` objects in the same order.
-  - `{"code": 0}` indicates success.
-  - Non-zero codes indicate failure — for example, if the document `id` does not exist.
 </Callout>
 
 ---
@@ -63,9 +77,9 @@ print(result)  # [{"code":0}, {"code":0}]
 
 Use `delete_by_filter()` to remove all documents that match a boolean `filter` expression.
 
-The `filter` can reference scalar fields (e.g., `publish_year`, `language`) using comparison and logical operators.
+The `filter` can reference scalar fields (e.g., `publish_year`, `language`) using [comparison and logical operators](../query/filter/#supported-filter-syntax).
 
-```python title="Delete documents by filter condition"
+```python tab="Python" title="Delete documents by filter condition"
 # Delete all books published before 1900
 collection.delete_by_filter(filter="publish_year < 1900")   # [!code highlight]
 
@@ -73,4 +87,12 @@ collection.delete_by_filter(filter="publish_year < 1900")   # [!code highlight]
 collection.delete_by_filter(                                # [!code highlight]
     filter='publish_year < 1900 AND (language = "English" OR language = "Chinese")'
 )
+```
+
+```ts tab="Node.js" title="Delete documents by filter condition"
+// Delete all books published before 1900
+collection.deleteByFilterSync("publish_year < 1900");   // [!code highlight]
+
+// Combined filter
+collection.deleteByFilterSync('publish_year < 1900 AND (language = "English" OR language = "Chinese")');  // [!code highlight]
 ```

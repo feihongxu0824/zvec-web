@@ -2,7 +2,6 @@
 title: Multiple Vectors
 extendedTitle: Multi-Vector Search
 pythonApiReference: /api-reference/python/collection/#zvec.model.collection.Collection.query
-nodejsApiReference: /api-reference/nodejs/classes/ZVecCollection#querysync
 ---
 
 
@@ -68,36 +67,30 @@ This guide assumes:
 
 ## Performing Multi-Vector Search
 
-To run a multi-vector search, pass a list of [`VectorQuery`](../single-vector/#vectorquery) objects to the `query()` method and specify a fusion strategy via the `reranker` parameter.
+To run a multi-vector search, pass a list of [vector query specification](../#query) to the `query()` method and specify a fusion strategy via the `reranker` parameter.
 
-<Accordions type="single">
-  <Accordion title="Code Example">
+This example queries both `dense_embedding` and `sparse_embedding` and uses a `WeightedReranker` to combine their results:
 
-  This example queries both `dense_embedding` and `sparse_embedding` and uses a `WeightedReranker` to combine their results:
+```python title="Query with multiple vectors"
+import zvec
 
-  ```python title="Query with multiple vectors"
-  import zvec
-
-  result = collection.query(  # [!code highlight]
-      topk=5,  # Retrieve top 5 candidates from each individual vector embedding
-      vectors=[  # List of vector queries — one for each embedding space to search
-          zvec.VectorQuery(field_name="dense_embedding", vector=[0.1] * 768),           # [!code highlight]
-          zvec.VectorQuery(field_name="sparse_embedding", vector={1: 0.1, 37: 0.43}),   # [!code highlight]
-      ],
-      reranker=zvec.WeightedReRanker(  # [!code highlight]
-          topn=3,  # Return top 3 documents after re-ranking
-          metric=zvec.MetricType.IP,  # Metric used to interpret raw scores
-          weights={  # Assign higher importance (weight) to 'dense_embedding'
-              "dense_embedding": 1.2,
-              "sparse_embedding": 1.0,
-          },
-      ),
-  )
-  print(result)
-  ```
-
-  </Accordion>
-</Accordions>
+result = collection.query(  # [!code highlight]
+    topk=5,  # Retrieve top 5 candidates from each individual vector embedding
+    vectors=[  # List of vector queries — one for each embedding space to search
+        zvec.VectorQuery(field_name="dense_embedding", vector=[0.1] * 768),           # [!code highlight]
+        zvec.VectorQuery(field_name="sparse_embedding", vector={1: 0.1, 37: 0.43}),   # [!code highlight]
+    ],
+    reranker=zvec.WeightedReRanker(  # [!code highlight]
+        topn=3,  # Return top 3 documents after re-ranking
+        metric=zvec.MetricType.IP,  # Metric used to interpret raw scores
+        weights={  # Assign higher importance (weight) to 'dense_embedding'
+            "dense_embedding": 1.2,
+            "sparse_embedding": 1.0,
+        },
+    ),
+)
+print(result)
+```
 
 <Callout className="text-base" type="info">
 

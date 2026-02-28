@@ -24,7 +24,7 @@ This guide assumes you:
 
   This example collection contains one dense vector field `dense_embedding` and one scalar field `publish_year`.
 
-  ```python title="Open a collection"
+  ```python tab="Python" title="Open a collection"
   import zvec
 
   # [!code word:dense_embedding]
@@ -51,6 +51,33 @@ This guide assumes you:
   collection = zvec.open(path="/path/to/collection")  # [!code highlight]
   ```
 
+  ```ts tab="Node.js" title="Open a collection"
+  import { ZVecCollection, ZVecCollectionSchema, ZVecDataType, ZVecIndexType, ZVecMetricType, ZVecOpen } from "@zvec/zvec";
+
+  // [!code word:dense_embedding]
+  // [!code word:publish_year]
+  const collectionSchema: ZVecCollectionSchema = new ZVecCollectionSchema({   // [!code highlight]
+      name: "example_collection",
+      vectors: [
+          {
+              name: "dense_embedding",
+              dataType: ZVecDataType.VECTOR_FP32,
+              dimension: 768,
+              indexParams: { indexType: ZVecIndexType.HNSW, metricType: ZVecMetricType.COSINE }
+          }
+      ],
+      fields: [
+          {
+              name: "publish_year",
+              dataType: ZVecDataType.INT32,
+              indexParams: { indexType: ZVecIndexType.INVERT, enableRangeOptimization: true }
+          }
+      ]
+  });
+
+  const collection: ZVecCollection = ZVecOpen("/path/to/collection");   // [!code highlight]
+  ```
+
   </Accordion>
 </Accordions>
 
@@ -58,9 +85,9 @@ This guide assumes you:
 
 ## Performing Filtered Vector Search
 
-To combine vector similarity search with filters, pass both a `VectorQuery` and a `filter` expression to the `query()` method.
+To combine vector similarity search with filters, pass both a [vector query specification](../#query) and a `filter` expression to the `query()` method.
 
-```python title="Filtered vector similarity search"
+```python tab="Python" title="Filtered vector similarity search"
 import zvec
 
 result = collection.query(
@@ -72,6 +99,16 @@ result = collection.query(
     topk=10,
 )
 print(result)
+```
+
+```ts tab="Node.js" title="Filtered vector similarity search"
+let result = collection.querySync({   // [!code highlight]
+    fieldName: "dense_embedding",
+    vector: Array(768).fill(0.1),   // Replace with real embedding
+    filter: "publish_year > 1936",  // Only consider books published after 1936 [!code highlight]
+    topk: 10
+});
+console.log(result);
 ```
 
 This returns the top-10 most similar documents that satisfy `publish_year > 1936`, sorted by similarity score.

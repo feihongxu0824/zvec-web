@@ -10,6 +10,8 @@ import { getMDXComponents } from '@/mdx-components';
 import type { Metadata } from 'next';
 import { createRelativeLink } from 'fumadocs-ui/mdx';
 import { LinkButton, PythonLinkButton, NodeJSLinkButton } from '@/components/LinkButton';
+import { MarkdownCopyButton } from '@/components/ai/page-actions';
+
 
 export default async function Page(props: PageProps<'/[lang]/docs/[[...slug]]'>) {
   const params = await props.params;
@@ -17,6 +19,9 @@ export default async function Page(props: PageProps<'/[lang]/docs/[[...slug]]'>)
   if (!page) notFound();
 
   const MDX = page.data.body;
+  const markdownUrl = `/mdx${page.url}.mdx`;
+  const hasReference =
+    page.data.pythonApiReference || page.data.nodejsApiReference;
 
   return (
     <DocsPage
@@ -28,18 +33,19 @@ export default async function Page(props: PageProps<'/[lang]/docs/[[...slug]]'>)
     >
       <DocsTitle>{page.data.extendedTitle.trim() ? page.data.extendedTitle : page.data.title}</DocsTitle>
       <DocsDescription>{page.data.description}</DocsDescription>
-      {page.data.pythonApiReference || page.data.nodejsApiReference ? (
-        <div className="border-t pt-6 mt-6">
-          <div className="flex flex-row flex-wrap gap-3 items-center border-b pb-6">
-            {page.data.pythonApiReference && (
-              <PythonLinkButton url={page.data.pythonApiReference} label="Python API Reference" />
-            )}
-            {page.data.nodejsApiReference && (
-              <NodeJSLinkButton url={page.data.nodejsApiReference} label="Node.js API Reference" />
-            )}
+      <div className="border-t pt-6 mt-6">
+        <div className="flex flex-row flex-wrap gap-3 items-center border-b pb-6">
+          {page.data.pythonApiReference && (
+            <PythonLinkButton url={page.data.pythonApiReference} label="Python API Reference" />
+          )}
+          {page.data.nodejsApiReference && (
+            <NodeJSLinkButton url={page.data.nodejsApiReference} label="Node.js API Reference" />
+          )}
+          <div className={hasReference ? "ml-auto" : ""}>
+            <MarkdownCopyButton markdownUrl={markdownUrl} />
           </div>
         </div>
-      ) : null}
+      </div>
       <DocsBody>
         <MDX
           components={getMDXComponents({

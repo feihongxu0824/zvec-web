@@ -26,6 +26,7 @@ export const metadata: Metadata = {
     template: '%s | Zvec',
     default: 'Zvec | A lightweight, lightning-fast, in-process vector database',
   },
+  description: 'Zvec is a lightweight, lightning-fast in-process vector database by Alibaba. Built for RAG applications with simple APIs, powerful indexing, and zero configuration.',
 };
 
 

@@ -11,7 +11,7 @@ import {
 } from 'fumadocs-ui/page';
 
 
-export default async function Page(props: { params: Promise<{ slug: string; lang: string }> }) {
+export default async function Page(props: { params: Promise<{ slug: string; lang: string; }>; }) {
   const params = await props.params;
   const page = blog.getPage([params.slug], params.lang);
   if (!page) notFound();
@@ -57,12 +57,23 @@ export function generateStaticParams() {
 }
 
 
-export async function generateMetadata(props: { params: Promise<{ slug: string; lang: string }> }) {
+export async function generateMetadata(props: { params: Promise<{ slug: string; lang: string; }>; }) {
   const params = await props.params;
   const page = blog.getPage([params.slug], params.lang);
   if (!page) notFound();
+
+  const imageUrl = page.data.image
+    ? new URL(page.data.image, process.env.NEXT_PUBLIC_SITE_URL || 'https://zvec.org').toString()
+    : undefined;
+
   return {
     title: page.data.title,
     description: page.data.description,
+    openGraph: {
+      images: imageUrl ? [imageUrl] : undefined,
+    },
+    twitter: {
+      images: imageUrl ? [imageUrl] : undefined,
+    },
   };
 }

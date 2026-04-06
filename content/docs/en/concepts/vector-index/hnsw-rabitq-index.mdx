@@ -19,15 +19,7 @@ HNSW-RaBitQ combines two techniques to achieve high recall with minimal memory:
 - **HNSW graph for navigation** 🪜
   - Same multi-layer graph structure as the standard [HNSW index](../hnsw-index/) — sparse upper layers for fast long-range jumps, dense lower layers for fine-grained local search.
 - **RaBitQ for distance estimation** 🔍
-  1. During **training**, the algorithm clusters vectors and learns centroids. Each vector is then quantized into a compact binary representation (as few as configurable 1–9 bits per dimension).
-  1. During **search**, the query vector is transformed using the same rotation, and distances to candidate nodes are *estimated* using SIMD instructions on the quantized data — instead of full FP32 distance computations.
-  1. The key insight: **graph construction uses original FP32 vectors** for maximum accuracy, while **search uses quantized vectors** for speed and low memory. This separation ensures graph quality is never compromised by quantization.
-
-### Why This Matters
-
-In a standard HNSW index, every search step requires loading full FP32 vectors to compute exact distances. For 768-dimensional vectors, that's 3 KB per node — and a single query may visit thousands of nodes.
-
-With RaBitQ quantization at 7 bits per dimension, each vector shrinks to roughly **672 bytes** — a **~4.6x reduction**. At the extreme end, 1-bit quantization compresses each vector to just **96 bytes** — a **~32x reduction**. Since the HNSW graph traversal is memory-bound, smaller vectors translate directly to faster search and lower memory footprint.
+  - RaBitQ processes the data by applying a **random rotation** to the vectors before converting them into **binary codes** (1s and 0s). This approach allows the system to estimate distances using efficient bitwise operations, significantly **reducing both memory usage and the computational cost** compared to processing full-precision numbers.
 
 ## When to Use HNSW-RaBitQ?
 
@@ -39,7 +31,7 @@ With RaBitQ quantization at 7 bits per dimension, each vector shrinks to roughly
 
 **Best Practice**: Use HNSW-RaBitQ when you want HNSW-quality search without the memory overhead.
 
-The `total_bits` parameter controls the accuracy–memory trade-off — recall figures reported in the [paper](https://arxiv.org/abs/2405.12497) show that **7 bits** achieves ~99% recall, **5 bits** ~95%, and **4 bits** ~90% — all without raw vector reranking. Going as low as **1 bit** maximizes compression at the cost of lower recall.
+The `total_bits` parameter controls the accuracy–memory trade-off. According to the [paper](https://arxiv.org/abs/2405.12497), on specific datasets, **7 bits** achieves ~99% recall, **5 bits** ~95%, and **4 bits** ~90%. Going as low as **1 bit** maximizes compression at the cost of lower recall.
 
 </Callout>
 
@@ -93,20 +85,3 @@ The `total_bits` parameter controls the accuracy–memory trade-off — recall f
 | `radius` | **Distance (similarity) threshold** for range-based filtering — only documents satisfying the threshold are returned | Example: <br /> • With inner product `MetricType.IP`, set `radius=0.6` to keep only results with score > 0.6 <br /> ✅ Use when: You want to filter out low-quality matches <br /> 🚫 Skip when: You want all top-k results, regardless of quality |
 | `is_linear` | Forces a **brute-force linear search** instead of using the index | 🐌 Very slow for large datasets! <br /> ✅ Only use for: Debugging, tiny collections, or verifying index accuracy |
 | `is_using_refiner` | **Enables exact score refinement** — recomputes exact FP32 distances for top candidates after quantized search | ✅ Turn on: When you need maximum precision <br /> ⚠️ Adds latency due to full-precision re-scoring |
-
-## HNSW vs HNSW-RaBitQ
-
-| Aspect | [HNSW](../hnsw-index/) | HNSW-RaBitQ |
-| ------ | ---- | ----------- |
-| **Quantization method** | Standard [quantization](../quantization/) via `quantize_type` — supports **INT8**, **FP16**, **INT4** | Built-in **RaBitQ** binary quantization (1–9 bits per dimension) |
-| **Memory per vector** (768-dim) | ~3 KB (FP32), ~1.5 KB (FP16), ~768 B (INT8), ~384 B (INT4) | ~864 B (9-bit) to ~96 B (1-bit) |
-| **Search distance computation** | Exact FP32 (or quantized integer/fp16 arithmetic when quantized) | Fast distance estimation via RaBitQ |
-| **Recall** (typical) | ~99%+ (FP32), slightly lower when quantized | Up to 99% (tunable via `total_bits`) |
-| **Graph construction quality** | FP32 or quantized | FP32  |
-| **Refiner support** | ✅ Recomputes exact FP32 distances for quantized results | ✅ Same — recomputes exact FP32 distances |
-| **Platform** | All supported platforms | x86_64 only (AVX2 or higher required) |
-| **Best for** | General-purpose production; use with INT8/FP16 for moderate memory savings | Maximum compression with RaBitQ-specific optimizations on x86_64 |
-
-<Callout className="text-base" type="idea">
-  **How to choose**: If you need cross-platform compatibility, use the standard [HNSW index](../hnsw-index/) with [`quantize_type`](../quantization/) set to `INT8` or `FP16` — this already provides significant memory savings. Choose HNSW-RaBitQ when you are on x86_64 and want RaBitQ's specialized binary quantization, which can offer better accuracy-compression trade-offs at comparable memory levels.
-</Callout>

@@ -1,11 +1,11 @@
 {
-  "title": "AI Integration",
+  "title": "AI 集成",
   "pages": [
     "index",
-    "---Models---",
+    "---模型---",
     "embedding",
     "reranker",
-    "---Agents---",
+    "---智能体---",
     "mcp",
     "skills"
   ],

@@ -1,7 +1,6 @@
 {
   "pages": [
-    "guide",
-    "benchmarks",
-    "internals"
+    "db",
+    "ai"
   ]
 }

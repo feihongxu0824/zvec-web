@@ -3,6 +3,7 @@ import { DocsLayout } from 'fumadocs-ui/layouts/docs';
 import { baseOptions } from '@/lib/layout.shared';
 import type { Metadata } from 'next';
 import { SITE_URL } from '@/lib/constants';
+import { GithubInfo } from 'fumadocs-ui/components/github-info';
 
 
 export async function generateMetadata({
@@ -46,6 +47,12 @@ export default async function Layout({
       {...baseOptions(lang)}
       sidebar={{ prefetch: false }}
       tree={source.pageTree[lang]}
+      links={[
+        {
+          type: 'custom',
+          children: <GithubInfo owner="alibaba" repo="zvec" />,
+        },
+      ]}
     >
       {children}
     </DocsLayout >

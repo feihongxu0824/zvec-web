@@ -101,7 +101,7 @@ const fieldSchema: ZVecFieldSchema = {  // [!code highlight]
 
 </Step>
 
-使用 `VectorSchema` 定义向量字段，包含以下属性
+使用 `VectorSchema` 定义向量字段，包含以下属性：
 
 1. `name`：向量在 collection 中的唯一字符串标识符。
 1. [`data_type`](../../../concepts/data-modeling/#向量类型)：向量的数值格式。
@@ -117,7 +117,7 @@ const fieldSchema: ZVecFieldSchema = {  // [!code highlight]
 
 ### 选择向量索引类型
 
-`index_param` 允许你配置合适的索引策略：
+`index_param` 让你能够灵活配置合适的索引策略：
 
 - `metric_type`：`COSINE`、`L2` 或 `IP`(内积) — *请务必确保你选择的度量方式与 embedding 模型训练方式保持一致!*
 - [`quantize_type`](../../../concepts/vector-index/quantization/) (可选)：对向量进行压缩，以减小索引体积并加速检索 (会有轻微的 [recall](../../../concepts/vector-index/#recall衡量近似检索精度) 损失)。

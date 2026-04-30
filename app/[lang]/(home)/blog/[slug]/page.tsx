@@ -10,6 +10,7 @@ import {
   DocsTitle,
 } from 'fumadocs-ui/page';
 import { SITE_URL } from '@/lib/constants';
+import { getGitMtime, latestDate } from '@/lib/git-mtime';
 import { JsonLd } from '@/components/JsonLd';
 import type { Metadata } from 'next';
 
@@ -21,13 +22,17 @@ export default async function Page(props: { params: Promise<{ slug: string; lang
 
   const MDX = page.data.body;
 
+  const modified = latestDate(getGitMtime(page.absolutePath), page.data.date);
+  const modifiedIso = modified ? modified.toISOString() : page.data.date;
+
   const articleJsonLd = {
     '@context': 'https://schema.org',
     '@type': 'Article',
     headline: page.data.title,
     description: page.data.description,
     datePublished: page.data.date,
-    dateModified: page.data.date,
+    dateModified: modifiedIso,
+    inLanguage: params.lang === 'zh' ? 'zh-CN' : 'en-US',
     mainEntityOfPage: {
       '@type': 'WebPage',
       '@id': `${SITE_URL}/${params.lang}/blog/${params.slug}/`,
@@ -97,6 +102,9 @@ export async function generateMetadata(props: { params: Promise<{ slug: string; 
 
   const url = `${SITE_URL}/${params.lang}/blog/${params.slug}/`;
 
+  const modified = latestDate(getGitMtime(page.absolutePath), page.data.date);
+  const modifiedIso = modified ? modified.toISOString() : page.data.date;
+
   return {
     title: page.data.title,
     description: page.data.description,
@@ -109,6 +117,7 @@ export async function generateMetadata(props: { params: Promise<{ slug: string; 
       description: page.data.description,
       images: imageUrl ? [imageUrl] : undefined,
       publishedTime: page.data.date,
+      modifiedTime: modifiedIso,
     },
     twitter: {
       card: 'summary_large_image',

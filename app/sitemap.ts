@@ -1,4 +1,5 @@
 import { SITE_URL } from '@/lib/constants';
+import { getGitMtime, latestDate } from '@/lib/git-mtime';
 import { i18n } from '@/lib/i18n';
 import { blog, source } from '@/lib/source';
 import type { MetadataRoute } from 'next';
@@ -10,65 +11,71 @@ const BUILD_TIME = new Date();
 export default function sitemap(): MetadataRoute.Sitemap {
   const entries: MetadataRoute.Sitemap = [];
 
+  const newestByLang: Record<string, Date | undefined> = {};
+  for (const lang of i18n.languages) {
+    const dates: Array<Date | undefined> = [];
+    for (const p of source.getPages(lang)) {
+      const mtime = getGitMtime(p.absolutePath);
+      if (mtime) dates.push(mtime);
+    }
+    for (const p of blog.getPages(lang)) {
+      dates.push(
+        latestDate(getGitMtime(p.absolutePath), p.data.date),
+      );
+    }
+    newestByLang[lang] = latestDate(...dates);
+  }
+
   // Home pages
   for (const lang of i18n.languages) {
     entries.push({
       url: `${SITE_URL}/${lang}/`,
-      lastModified: BUILD_TIME,
-      changeFrequency: 'monthly',
-      priority: 1.0,
+      lastModified: newestByLang[lang] ?? BUILD_TIME,
     });
   }
 
-  // API reference pages
+  // API reference pages (no source MDX; use newest per-language content time)
   for (const lang of i18n.languages) {
     entries.push({
       url: `${SITE_URL}/${lang}/api-reference/`,
-      lastModified: BUILD_TIME,
-      changeFrequency: 'monthly',
-      priority: 0.5,
+      lastModified: newestByLang[lang] ?? BUILD_TIME,
     });
   }
 
-  // Documentation pages
+  // Documentation pages — lastmod from git commit time of the source MDX.
   for (const lang of i18n.languages) {
-    const pages = source.getPages(lang);
-    for (const page of pages) {
+    for (const page of source.getPages(lang)) {
+      const mtime = getGitMtime(page.absolutePath);
       entries.push({
         url: `${SITE_URL}${page.url}/`,
-        lastModified: BUILD_TIME,
-        changeFrequency: 'weekly',
-        priority: 0.9,
+        lastModified: mtime ?? BUILD_TIME,
       });
     }
   }
 
-  // Blog pages (index)
+  // Blog index — newest of (any post's git mtime | frontmatter date).
   for (const lang of i18n.languages) {
     const posts = blog.getPages(lang);
-    const latest = posts.reduce<Date | undefined>((acc, p) => {
-      const d = p.data.date ? new Date(p.data.date) : undefined;
-      if (!d || Number.isNaN(d.getTime())) return acc;
-      return !acc || d > acc ? d : acc;
-    }, undefined);
+    const latest = latestDate(
+      ...posts.flatMap((p) => [
+        getGitMtime(p.absolutePath),
+        p.data.date,
+      ]),
+    );
     entries.push({
       url: `${SITE_URL}/${lang}/blog/`,
       lastModified: latest ?? BUILD_TIME,
-      changeFrequency: 'monthly',
-      priority: 0.7,
     });
   }
 
-  // Blog posts
+  // Blog posts — max(git mtime, frontmatter date) so edits bump lastmod
+  // while still reflecting the publication date for never-edited posts.
   for (const lang of i18n.languages) {
-    const posts = blog.getPages(lang);
-    for (const post of posts) {
-      const date = post.data.date ? new Date(post.data.date) : undefined;
+    for (const post of blog.getPages(lang)) {
+      const last = latestDate(getGitMtime(post.absolutePath), post.data.date);
       entries.push({
         url: `${SITE_URL}${post.url}/`,
-        lastModified: date && !Number.isNaN(date.getTime()) ? date : BUILD_TIME,
-        changeFrequency: 'monthly',
-        priority: 0.7,
+        lastModified: last ?? BUILD_TIME,
       });
     }
   }

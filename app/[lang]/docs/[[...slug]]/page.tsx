@@ -120,9 +120,11 @@ export async function generateMetadata(
       images: ogImageUrl,
     },
     alternates: {
+      canonical: `${SITE_URL}/${params.lang}/docs/${slug}/`,
       languages: {
         en: `${SITE_URL}/en/docs/${slug}/`,
         zh: `${SITE_URL}/zh/docs/${slug}/`,
+        'x-default': `${SITE_URL}/en/docs/${slug}/`,
       },
     },
   };

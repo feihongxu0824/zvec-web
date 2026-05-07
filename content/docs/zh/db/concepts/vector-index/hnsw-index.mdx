@@ -54,9 +54,9 @@ import { CodeExampleLinkButton, PythonLinkButton, NodeJSLinkButton } from '@/com
 ### 索引构建参数
 
 <div className="flex flex-row flex-wrap gap-3 items-center">
-  <CodeExampleLinkButton url="../../../collections/create/schema/#hnsw-example" label="Code Example" />
-  <PythonLinkButton url="/api-reference/python/params/#zvec.model.param.HnswIndexParam" label="Python API Reference" />
-  <NodeJSLinkButton url="/api-reference/nodejs/interfaces/ZVecHnswIndexParams" label="Node.js API Reference" />
+  <CodeExampleLinkButton url="../../../collections/create/schema/#hnsw-example" label="代码示例" />
+  <PythonLinkButton url="/api-reference/python/params/#zvec.model.param.HnswIndexParam" label="Python API 参考" />
+  <NodeJSLinkButton url="/api-reference/nodejs/interfaces/ZVecHnswIndexParams" label="Node.js API 参考" />
 </div>
 
 | 参数 | 描述 | 调参指南 |
@@ -69,14 +69,14 @@ import { CodeExampleLinkButton, PythonLinkButton, NodeJSLinkButton } from '@/com
 ### 索引查询参数
 
 <div className="flex flex-row flex-wrap gap-3 items-center">
-  <CodeExampleLinkButton url="../../../data-operations/query/single-vector/#hnsw-example" label="Code Example" />
-  <PythonLinkButton url="/api-reference/python/params/#zvec.model.param.HnswQueryParam" label="Python API Reference" />
-  <NodeJSLinkButton url="/api-reference/nodejs/interfaces/ZVecHnswQueryParams" label="Node.js API Reference" />
+  <CodeExampleLinkButton url="../../../data-operations/query/single-vector/#hnsw-example" label="代码示例" />
+  <PythonLinkButton url="/api-reference/python/params/#zvec.model.param.HnswQueryParam" label="Python API 参考" />
+  <NodeJSLinkButton url="/api-reference/nodejs/interfaces/ZVecHnswQueryParams" label="Node.js API 参考" />
 </div>
 
 | 参数 | 描述 | 调参指南 |
 | --- | --- | ------- |
 | `ef` | **查询时的候选池大小** — 决定了在图遍历过程中每一步会探索多少个潜在邻居 | • 更大的 `ef` → <br /> ✨ 召回率更高 <br /> ⚠️  查询延迟也会增加 <br /><br /> 💡 如果发现 `ef=300` 时搜不到想要的结果，不妨试着调到 `500` 或甚至更高，以此来扩大搜索范围。 |
-| `radius` | **距离(相似度)阈值**，用于范围过滤 — 只有满足该阈值的 documents 才会被返回 | 示例：<br /> • 使用内积 `MetricType.IP` 时，设置 `radius=0.6` 仅保留分数 > 0.6 的结果 <br /> ✅ 适用于：需要剔除掉低质量匹配时 <br /> 🚫 不适用于：必须返回全部 top-K 个结果，不关心分数质量 |
+| `radius` | **距离(相似度)阈值**，用于范围过滤 — 只有满足该阈值的 documents 才会被返回 | 示例：<br /> • 使用内积 `MetricType.IP` 时，设置 `radius=0.6` 仅保留分数 > 0.6 的结果 <br /> ✅ 适用于：想要剔除掉低质量匹配的结果 <br /> 🚫 不适用于：必须返回全部 top-K 个结果，不关心分数质量 |
 | `is_linear` | 强制使用**暴力线性检索** (不使用配置的索引) | 🐌 大数据集下非常慢！<br /> ✅ 仅用于：调试、超小数据集或验证索引准确性 |
-| `is_using_refiner` | 对头部候选结果**启用精排** (重新计算精确的相似度分数) — 在开启了**量化**的场景下有帮助，能挽回精度损失，提高召回质量 | ✅ 建议开启：需要更高精度时 <br /> ⚠️ 注意：因为要重新精确计算分数，所以会增加查询延迟 |
+| `is_using_refiner` | 对头部候选结果**启用精排** (重新计算精确的相似度分数) — 在开启了**量化**的场景下有帮助，能挽回精度损失，提高召回质量 | ✅ 在启用量化的场景下，如需得到更高精度时开启精排 <br /> ⚠️ 注意：因为要重新精确计算分数，所以会增加查询延迟 |

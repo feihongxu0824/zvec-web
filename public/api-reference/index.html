@@ -10,7 +10,7 @@
     content="Zvec API, vector database API, SDK reference, embedded vector database, in-process vector database, HNSW, IVF, semantic search" />
 
   <!-- Canonical + hreflang -->
-  <link rel="canonical" href="https://zvec.org/en/api-reference/" />
+  <link rel="canonical" href="https://zvec.org/api-reference/" />
   <link rel="alternate" hreflang="en" href="https://zvec.org/en/api-reference/" />
   <link rel="alternate" hreflang="zh" href="https://zvec.org/zh/api-reference/" />
   <link rel="alternate" hreflang="x-default" href="https://zvec.org/en/api-reference/" />
@@ -35,8 +35,8 @@
   <link rel="icon" href="/favicon.ico" />
 
   <!-- Redirect for real users (runs before body paints).
-       Crawlers that don't execute JS will read the body content below,
-       and the <noscript> meta refresh handles non-JS browsers. -->
+       Crawlers and non-JS browsers fall through to the visible body below,
+       which is a fully functional language-selection landing page. -->
   <script>
     (function () {
       try {
@@ -46,9 +46,6 @@
       } catch (e) { /* fall through to visible content */ }
     })();
   </script>
-  <noscript>
-    <meta http-equiv="refresh" content="0; url=/en/api-reference/" />
-  </noscript>
 
   <style>
     * {

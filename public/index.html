@@ -38,8 +38,8 @@
   <link rel="icon" href="/favicon.ico" />
 
   <!-- Redirect for real users (runs before body paints).
-       Crawlers that don't execute JS will read the body content below,
-       and the <noscript> meta refresh handles non-JS browsers. -->
+       Crawlers and non-JS browsers fall through to the visible body below,
+       which is a fully functional language-selection landing page. -->
   <script>
     (function () {
       try {
@@ -49,9 +49,6 @@
       } catch (e) { /* fall through to visible content */ }
     })();
   </script>
-  <noscript>
-    <meta http-equiv="refresh" content="0; url=/en/" />
-  </noscript>
 
   <!-- Structured data -->
   <script type="application/ld+json">
@@ -195,16 +192,23 @@
   <main>
     <img class="logo" src="/img/zvec-logo-light.png" alt="Zvec" />
     <h1>Zvec — An open-source, in-process vector database</h1>
-    <p class="tagline">An open-source, in-process vector database by Alibaba — lightweight, lightning-fast, and battle-tested.</p>
+    <p class="tagline">An open-source, in-process vector database by Alibaba — lightweight, lightning-fast, and
+      battle-tested.</p>
 
     <ul class="features">
       <li>⚡ <strong>Blazing Fast</strong>: Scale to billions of vectors with sub-millisecond search latency.</li>
-      <li>🧩 <strong>Simple, Just Works</strong>: A single package is all you need — pure local, just install and start searching in seconds. No servers, no config, no fuss.</li>
-      <li>✨ <strong>Dense + Sparse Vectors</strong>: Work with both dense and sparse embeddings, with native support for multi-vector queries in a single call.</li>
-      <li>🎯 <strong>Hybrid Search</strong>: Combine semantic similarity with structured filters for precise results.</li>
-      <li>🛡️ <strong>Durable Storage</strong>: Write-ahead logging (WAL) guarantees persistence — data is never lost, even on process crash or power failure.</li>
-      <li>🔒 <strong>Concurrent Access</strong>: Multiple processes can read the same collection simultaneously; writes are single-process exclusive.</li>
-      <li>📦 <strong>Runs Anywhere</strong>: As an in-process library, Zvec runs wherever your code runs — notebooks, servers, CLI tools, or even edge devices.</li>
+      <li>🧩 <strong>Simple, Just Works</strong>: A single package is all you need — pure local, just install and start
+        searching in seconds. No servers, no config, no fuss.</li>
+      <li>✨ <strong>Dense + Sparse Vectors</strong>: Work with both dense and sparse embeddings, with native support for
+        multi-vector queries in a single call.</li>
+      <li>🎯 <strong>Hybrid Search</strong>: Combine semantic similarity with structured filters for precise results.
+      </li>
+      <li>🛡️ <strong>Durable Storage</strong>: Write-ahead logging (WAL) guarantees persistence — data is never lost,
+        even on process crash or power failure.</li>
+      <li>🔒 <strong>Concurrent Access</strong>: Multiple processes can read the same collection simultaneously; writes
+        are single-process exclusive.</li>
+      <li>📦 <strong>Runs Anywhere</strong>: As an in-process library, Zvec runs wherever your code runs — notebooks,
+        servers, CLI tools, or even edge devices.</li>
     </ul>
 
     <h2>Choose your language</h2>

@@ -14,9 +14,7 @@ The `optimize()` method **improves search performance** by building the configur
 
 ## Why Optimization is Needed
 
-In Zvec, newly inserted vectors are **not added directly** to the configured vector index.
-
-Instead, they are first appended to a lightweight [flat (brute-force) index](../../concepts/vector-index/flat-index/) buffer.
+In Zvec, newly inserted vectors are **not added directly** to the configured vector index. Instead, they are first staged in a lightweight [flat index (brute-force)](../../concepts/vector-index/flat-index/) buffer.
 
 This design choice offers important benefits — but also a trade-off:
 
@@ -28,7 +26,7 @@ This design choice offers important benefits — but also a trade-off:
 
 🔁 **Solution**
 
-Call `optimize()` periodically. This triggers a background process that merges the buffered vectors into the configured vector index — **without interrupting ongoing reads or writes**. 🚀
+Call `optimize()` periodically. This triggers a background worker that merges the staged vectors into the configured vector index — **without interrupting ongoing reads or writes**. 🚀
 
 <Callout className="text-base" type="info">
   `optimize()` is a synchronous method (it returns only after the optimization has finished), but it **does not lock the collection**.  

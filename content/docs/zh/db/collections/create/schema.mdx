@@ -7,7 +7,6 @@ nodejsApiReference: /api-reference/nodejs/classes/ZVecCollectionSchema
 
 
 import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
-import { Step, Steps } from 'fumadocs-ui/components/steps';
 import { PythonLinkButton, NodeJSLinkButton } from '@/components/LinkButton';
 
 **Collection Schema** `CollectionSchema` 定义了插入到 collection 中的每个 [document](../../../concepts/data-modeling/#documents) 必须遵循的结构。
@@ -22,21 +21,11 @@ import { PythonLinkButton, NodeJSLinkButton } from '@/components/LinkButton';
 1. `fields`：标量字段列表。
 1. `vectors`：向量字段列表。
 
-<Steps>
-
-<Step>
-
-## Collection 名称
-
-</Step>
+## Collection 名称 [step]
 
 Collection 标识符。此名称用于内部引用和日志记录。
 
-<Step>
-
-## 标量字段
-
-</Step>
+## 标量字段 [step]
 
 标量字段存储非向量（即结构化）数据，如字符串、数字、布尔值或数组。
 
@@ -95,11 +84,7 @@ const fieldSchema: ZVecFieldSchema = {  // [!code highlight]
 
 </Accordions>
 
-<Step>
-
-## 向量（Embedding）
-
-</Step>
+## 向量（Embedding）[step]
 
 使用 `VectorSchema` 定义向量字段，包含以下属性：
 
@@ -261,11 +246,7 @@ const vectorSchema: ZVecVectorSchema = {  // [!code highlight]
 
 </Accordions>
 
-<Step>
-
 ## 完整 Schema 示例
-
-</Step>
 
 <Accordions type="single">
   <Accordion title="代码示例">
@@ -320,5 +301,3 @@ const vectorSchema: ZVecVectorSchema = {  // [!code highlight]
 
   </Accordion>
 </Accordions>
-
-</Steps>

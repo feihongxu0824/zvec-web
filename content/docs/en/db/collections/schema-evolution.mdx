@@ -113,7 +113,7 @@ collection.addColumnSync({ fieldSchema: newField, expression: "5" });   // [!cod
 ```
 
 - `field_schema`:  
-    Defines the name and data type of the new field. See [scalar field schema](../create/schema/#scalar-fields) for details.
+    Defines the name and data type of the new field. See [scalar field schema](../create/schema/#scalar-fields-step) for details.
 - `expression`:  
     Specifies the default value for existing documents. Since they don't already have a `rating` field, Zvec uses this `expression` to fill in the missing values — in this case, setting `rating = 5` for all current documents.
 

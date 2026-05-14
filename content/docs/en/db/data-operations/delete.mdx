@@ -46,7 +46,7 @@ const collection: ZVecCollection = ZVecOpen("/path/to/example/collection");   //
 
 Use `delete()` to remove one or more documents when you know their exact IDs.
 
-```python tab="Python" title="Delete documents by IDs"
+```python tab="Python" title="Delete documents by IDs" tab-group="code-demo"
 # Delete a single document
 result = collection.delete(ids="doc_id_1")              # [!code highlight]
 print(result)  # {"code":0} means success
@@ -79,7 +79,7 @@ Use `delete_by_filter()` to remove all documents that match a boolean `filter` e
 
 The `filter` can reference scalar fields (e.g., `publish_year`, `language`) using [comparison and logical operators](../query/filter/#supported-filter-syntax).
 
-```python tab="Python" title="Delete documents by filter condition"
+```python tab="Python" title="Delete documents by filter condition" tab-group="code-demo"
 # Delete all books published before 1900
 collection.delete_by_filter(filter="publish_year < 1900")   # [!code highlight]
 

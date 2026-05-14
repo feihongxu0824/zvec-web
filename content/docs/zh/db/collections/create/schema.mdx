@@ -56,7 +56,7 @@ Collection 标识符。此名称用于内部引用和日志记录。
 
 <Accordion title="代码示例">
 
-```python tab="Python" title="定义标量字段"
+```python tab="Python" title="定义标量字段" tab-group="code-demo"
 import zvec
 
 field_schema = zvec.FieldSchema(  # [!code highlight]
@@ -113,7 +113,7 @@ const fieldSchema: ZVecFieldSchema = {  // [!code highlight]
 
 使用 `FlatIndexParam()` 配置 Flat 索引。
 
-```python tab="Python" title="定义向量 embedding"
+```python tab="Python" title="定义向量 embedding" tab-group="code-demo"
 import zvec
 
 vector_schema = zvec.VectorSchema(  # [!code highlight]
@@ -143,7 +143,7 @@ const vectorSchema: ZVecVectorSchema = {  // [!code highlight]
 
 使用 [`HnswIndexParam()`](../../../concepts/vector-index/hnsw-index/#索引构建参数) 配置 HNSW 索引。
 
-```python tab="Python" title="定义向量 embedding"
+```python tab="Python" title="定义向量 embedding" tab-group="code-demo"
 import zvec
 
 vector_schema = zvec.VectorSchema(  # [!code highlight]
@@ -179,7 +179,7 @@ const vectorSchema: ZVecVectorSchema = {  // [!code highlight]
   HNSW-RaBitQ 仅在 **x86_64（需要 AVX2 或更高版本）** 平台上可用。
 </Callout>
 
-```python tab="Python" title="定义向量 embedding"
+```python tab="Python" title="定义向量 embedding" tab-group="code-demo"
 import zvec
 
 vector_schema = zvec.VectorSchema(  # [!code highlight]
@@ -218,7 +218,7 @@ const vectorSchema: ZVecVectorSchema = {  // [!code highlight]
 
 使用 [`IVFIndexParam()`](../../../concepts/vector-index/ivf-index/#索引构建参数) 配置 IVF 索引。
 
-```python tab="Python" title="定义向量 embedding"
+```python tab="Python" title="定义向量 embedding" tab-group="code-demo"
 import zvec
 
 vector_schema = zvec.VectorSchema(  # [!code highlight]

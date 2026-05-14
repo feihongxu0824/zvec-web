@@ -104,7 +104,7 @@ To perform a single-vector similarity search, use the `query()` method and provi
 
 <Accordion title="Dense Vector Search Example">
 
-```python tab="Python" title="Query with a single vector"
+```python tab="Python" title="Query with a single vector" tab-group="code-demo"
 import zvec
 
 result = collection.query(  # [!code highlight]
@@ -134,7 +134,7 @@ console.log(result);
 
 <Accordion title="Sparse Vector Search Example">
 
-```python tab="Python" title="Query with a single vector"
+```python tab="Python" title="Query with a single vector" tab-group="code-demo"
 import zvec
 
 result = collection.query(  # [!code highlight]
@@ -170,7 +170,7 @@ console.log(result);
 
 <Accordion title="Query by ID Example">
 
-```python tab="Python" title="Query with a single vector"
+```python tab="Python" title="Query with a single vector" tab-group="code-demo"
 import zvec
 
 result = collection.query(  # [!code highlight]
@@ -343,7 +343,7 @@ The exact type and structure of these `param` depend on the vector index used fo
 
 If `dense_embedding` uses an [HNSW](../../../concepts/vector-index/hnsw-index/) index, you can adjust the `ef` parameter like this:
 
-```python tab="Python" title="Query with index-specific parameters"
+```python tab="Python" title="Query with index-specific parameters" tab-group="code-demo"
 import zvec
 
 result = collection.query(    # [!code highlight]
@@ -373,7 +373,7 @@ console.log(result);
 
 If `dense_embedding` uses an [HNSW-RaBitQ](../../../concepts/vector-index/hnsw-rabitq-index/) index, you can adjust the `ef` parameter like this:
 
-```python tab="Python" title="Query with index-specific parameters"
+```python tab="Python" title="Query with index-specific parameters" tab-group="code-demo"
 import zvec
 
 result = collection.query(    # [!code highlight]
@@ -403,7 +403,7 @@ console.log(result);
 
 If `dense_embedding` uses an [IVF](../../../concepts/vector-index/ivf-index/) index, you can adjust the `n_probe` parameter like this:
 
-```python tab="Python" title="Query with index-specific parameters"
+```python tab="Python" title="Query with index-specific parameters" tab-group="code-demo"
 import zvec
 
 result = collection.query(  # [!code highlight]

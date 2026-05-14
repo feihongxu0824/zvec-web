@@ -56,7 +56,7 @@ If you do enable indexing, you can optionally activate performance-enhancing (bu
 
 <Accordion title="Code Example">
 
-```python tab="Python" title="Define a scalar field"
+```python tab="Python" title="Define a scalar field" tab-group="code-demo"
 import zvec
 
 field_schema = zvec.FieldSchema(  # [!code highlight]
@@ -113,7 +113,7 @@ The `index_param` allows you to configure the appropriate indexing strategy:
 
 Use `FlatIndexParam()` for Flat index configuration.
 
-```python tab="Python" title="Define a vector embedding"
+```python tab="Python" title="Define a vector embedding" tab-group="code-demo"
 import zvec
 
 vector_schema = zvec.VectorSchema(  # [!code highlight]
@@ -143,7 +143,7 @@ const vectorSchema: ZVecVectorSchema = {  // [!code highlight]
 
 Use [`HnswIndexParam()`](../../../concepts/vector-index/hnsw-index/#index-time-parameters) for HNSW index configuration.
 
-```python tab="Python" title="Define a vector embedding"
+```python tab="Python" title="Define a vector embedding" tab-group="code-demo"
 import zvec
 
 vector_schema = zvec.VectorSchema(  # [!code highlight]
@@ -179,7 +179,7 @@ Use [`HnswRabitqIndexParam()`](../../../concepts/vector-index/hnsw-rabitq-index/
   HNSW-RaBitQ is only available on **x86_64 (AVX2 or higher required)**.
 </Callout>
 
-```python tab="Python" title="Define a vector embedding"
+```python tab="Python" title="Define a vector embedding" tab-group="code-demo"
 import zvec
 
 vector_schema = zvec.VectorSchema(  # [!code highlight]
@@ -218,7 +218,7 @@ const vectorSchema: ZVecVectorSchema = {  // [!code highlight]
 
 Use [`IVFIndexParam()`](../../../concepts/vector-index/ivf-index/#index-time-parameters) for IVF index configuration.
 
-```python tab="Python" title="Define a vector embedding"
+```python tab="Python" title="Define a vector embedding" tab-group="code-demo"
 import zvec
 
 vector_schema = zvec.VectorSchema(  # [!code highlight]

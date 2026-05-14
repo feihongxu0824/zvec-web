@@ -51,7 +51,7 @@ Collection 加载完成后，你可以检查其结构、配置及运行时状态
 
 查看 [Schema](../create/schema)：
 
-```python tab="Python"
+```python tab="Python" tab-group="code-demo"
 print(collection.schema)
 ```
 
@@ -163,7 +163,7 @@ console.log(collection.schema.toString());
 
 查看**标量字段**：
 
-```python tab="Python"
+```python tab="Python" tab-group="code-demo"
 print(collection.schema.fields)
 ```
 
@@ -232,7 +232,7 @@ console.log(collection.schema.fields());
 
 查看**向量字段**：
 
-```python tab="Python"
+```python tab="Python" tab-group="code-demo"
 print(collection.schema.vectors)
 ```
 
@@ -286,7 +286,7 @@ console.log(collection.schema.vectors());
 
 `stats` 属性提供实时运行状态：
 
-```python tab="Python"
+```python tab="Python" tab-group="code-demo"
 print(collection.stats)
 ```
 
@@ -317,7 +317,7 @@ console.log(collection.stats);
 
 加载 collection 时传入的选项决定了其运行时行为：
 
-```python tab="Python"
+```python tab="Python" tab-group="code-demo"
 print(collection.option)
 ```
 
@@ -348,7 +348,7 @@ console.log(collection.options);
 
 `path` 属性返回 collection 在磁盘上的位置：
 
-```python tab="Python"
+```python tab="Python" tab-group="code-demo"
 print(collection.path)
 ```
 

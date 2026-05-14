@@ -196,7 +196,7 @@ Successfully inserted documents are immediately available for querying 🚀.
 To insert multiple documents at once, pass a list of `Doc` objects to `insert()`.  
 Each `Doc` is processed independently, and the method returns a list of `Status` objects — one per document.
 
-```python tab="Python" title="Insert a batch of documents"
+```python tab="Python" title="Insert a batch of documents" tab-group="code-demo"
 import zvec
 
 result = collection.insert(  # [!code highlight]
@@ -302,7 +302,7 @@ Assume your collection includes a [sparse vector](../../concepts/vector-embeddin
 
 Insert a document with a sparse vector like this:
 
-```python tab="Python" title="Insert a document with a sparse vector"
+```python tab="Python" title="Insert a document with a sparse vector" tab-group="code-demo"
 import zvec
 
 result = collection.insert(  # [!code highlight]
@@ -443,7 +443,7 @@ Real-world applications often require collections with multiple scalar fields an
 
 Insert a document with multiple fields and vectors like this:
 
-```python tab="Python" title="Insert a document with multiple fields and vectors"
+```python tab="Python" title="Insert a document with multiple fields and vectors" tab-group="code-demo"
 import zvec
 
 # Create a document

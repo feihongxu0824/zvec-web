@@ -196,7 +196,7 @@ console.log(result);  // { ok: true } 表示成功
 传入 `Doc` 对象列表即可一次插入多个 Document。
 每个 `Doc` 独立处理，方法返回 `Status` 对象列表——每个 Document 对应一个。
 
-```python tab="Python" title="批量插入 Document"
+```python tab="Python" title="批量插入 Document" tab-group="code-demo"
 import zvec
 
 result = collection.insert(  # [!code highlight]
@@ -302,7 +302,7 @@ console.log(result);  // [ { ok: true }, { ok: true }, { ok: true } ]
 
 按如下方式插入包含稀疏向量的 Document：
 
-```python tab="Python" title="插入包含稀疏向量的 Document"
+```python tab="Python" title="插入包含稀疏向量的 Document" tab-group="code-demo"
 import zvec
 
 result = collection.insert(  # [!code highlight]
@@ -443,7 +443,7 @@ console.log(result);  // { ok: true }
 
 按如下方式插入包含多个字段和向量的 Document：
 
-```python tab="Python" title="插入包含多个字段和向量的 Document"
+```python tab="Python" title="插入包含多个字段和向量的 Document" tab-group="code-demo"
 import zvec
 
 # 创建 Document

@@ -14,7 +14,7 @@ import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
 
 ## 安装
 
-```bash tab="Python"
+```bash tab="Python" tab-group="code-demo"
 pip install zvec
 ```
 
@@ -28,7 +28,7 @@ npm install @zvec/zvec
 
 定义 Schema 并创建 Collection。Schema 包含两部分：`fields` 用于标量字段，`vectors` 用于向量字段。
 
-```python tab="Python" title="创建 collection"
+```python tab="Python" title="创建 collection" tab-group="code-demo"
 import zvec
 
 # [!code word:embedding]
@@ -97,7 +97,7 @@ const collection = ZVecCreateAndOpen("./my_collection_data", collectionSchema); 
 
 [插入](../data-operations/insert/)包含标量和向量字段的 Document：
 
-```python tab="Python" title="插入 document"
+```python tab="Python" title="插入 document" tab-group="code-demo"
 # [!code word:embedding]
 # [!code word:publish_year]
 collection.insert(  # [!code highlight]
@@ -127,7 +127,7 @@ collection.insertSync({     // [!code highlight]
 
 新插入的向量会先暂存在临时索引。调用 [`optimize()`](../collections/optimize/) 构建向量索引以加速检索：
 
-```python tab="Python" title="优化 collection"
+```python tab="Python" title="优化 collection" tab-group="code-demo"
 # [!code word:optimize]
 collection.optimize()
 ```
@@ -385,7 +385,7 @@ console.log(result);
 
 查看 collection schema：
 
-```python tab="Python" title="查看 collection schema"
+```python tab="Python" title="查看 collection schema" tab-group="code-demo"
 # [!code word:schema]
 print(collection.schema)
 ```
@@ -397,7 +397,7 @@ console.log(collection.schema.toString());
 
 查看 collection 的统计信息：
 
-```python tab="Python" title="查看 collection 的统计信息"
+```python tab="Python" title="查看 collection 的统计信息" tab-group="code-demo"
 # [!code word:stats]
 print(collection.stats)
 ```
@@ -411,7 +411,7 @@ console.log(collection.stats);
 
 通过 `id` [删除](../data-operations/delete/#按-id-删除) document：
 
-```python tab="Python" title="删除 document"
+```python tab="Python" title="删除 document" tab-group="code-demo"
 # [!code word:delete]
 collection.delete(ids="book_1")
 ```
@@ -423,7 +423,7 @@ collection.deleteSync("book_1");
 
 按筛选条件[删除](../data-operations/delete/#按筛选条件删除) document：
 
-```python tab="Python" title="按筛选条件删除 document"
+```python tab="Python" title="按筛选条件删除 document" tab-group="code-demo"
 # [!code word:delete_by_filter]
 collection.delete_by_filter(filter="publish_year < 1900")
 ```

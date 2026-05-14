@@ -37,7 +37,7 @@ Call `optimize()` periodically. This triggers a background worker that merges th
 
 ## Usage Example
 
-```python tab="Python" title="Optimize a collection"
+```python tab="Python" title="Optimize a collection" tab-group="code-demo"
 import zvec
 
 collection = zvec.open(path="/path/to/my/collection")
@@ -72,7 +72,7 @@ collection.optimizeSync();  // [!code highlight]
 
 Use the `stats` property to get real-time insights into your collection's indexing state:
 
-```python tab="Python"
+```python tab="Python" tab-group="code-demo"
 print(collection.stats)
 ```
 

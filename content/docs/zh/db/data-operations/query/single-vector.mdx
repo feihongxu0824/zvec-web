@@ -104,7 +104,7 @@ import { Settings2 } from 'lucide-react';
 
 <Accordion title="稠密向量搜索示例">
 
-```python tab="Python" title="使用单个向量查询"
+```python tab="Python" title="使用单个向量查询" tab-group="code-demo"
 import zvec
 
 result = collection.query(  # [!code highlight]
@@ -134,7 +134,7 @@ console.log(result);
 
 <Accordion title="稀疏向量搜索示例">
 
-```python tab="Python" title="使用单个向量查询"
+```python tab="Python" title="使用单个向量查询" tab-group="code-demo"
 import zvec
 
 result = collection.query(  # [!code highlight]
@@ -170,7 +170,7 @@ console.log(result);
 
 <Accordion title="按 ID 查询示例">
 
-```python tab="Python" title="使用单个向量查询"
+```python tab="Python" title="使用单个向量查询" tab-group="code-demo"
 import zvec
 
 result = collection.query(  # [!code highlight]
@@ -343,7 +343,7 @@ print(result)
 
 如果 `dense_embedding` 使用 [HNSW](../../../concepts/vector-index/hnsw-index/) 索引，你可以像这样调整 `ef` 参数：
 
-```python tab="Python" title="使用索引特定参数查询"
+```python tab="Python" title="使用索引特定参数查询" tab-group="code-demo"
 import zvec
 
 result = collection.query(    # [!code highlight]
@@ -373,7 +373,7 @@ console.log(result);
 
 如果 `dense_embedding` 使用 [HNSW-RaBitQ](../../../concepts/vector-index/hnsw-rabitq-index/) 索引，你可以像这样调整 `ef` 参数：
 
-```python tab="Python" title="使用索引特定参数查询"
+```python tab="Python" title="使用索引特定参数查询" tab-group="code-demo"
 import zvec
 
 result = collection.query(    # [!code highlight]
@@ -403,7 +403,7 @@ console.log(result);
 
 如果 `dense_embedding` 使用 [IVF](../../../concepts/vector-index/ivf-index/) 索引，你可以像这样调整 `n_probe` 参数：
 
-```python tab="Python" title="使用索引特定参数查询"
+```python tab="Python" title="使用索引特定参数查询" tab-group="code-demo"
 import zvec
 
 result = collection.query(  # [!code highlight]

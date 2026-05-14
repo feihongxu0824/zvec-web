@@ -13,7 +13,7 @@ Collection 加载完成后，你可以检查其结构、配置及运行时状态
 <Accordions type="single">
   <Accordion title="代码示例">
 
-  ```python tab="Python" title="打开 Collection"
+  ```python tab="Python" title="打开 Collection" tab-group="code-demo"
   import zvec
 
   # [!code word:collection]
@@ -62,7 +62,7 @@ console.log(collection.schema.toString());
 <Accordions type="single">
   <Accordion title="示例">
 
-  ```json tab="Python"
+  ```json tab="Python" tab-group="code-demo"
   // [!code word:fields]
   // [!code word:vectors]
   {
@@ -176,7 +176,7 @@ console.log(collection.schema.fields());
 
   返回标量字段的列表。
 
-  ```json tab="Python"
+  ```json tab="Python" tab-group="code-demo"
   [{
     "name": "price",
     "data_type": "INT32",
@@ -245,7 +245,7 @@ console.log(collection.schema.vectors());
 
   返回向量字段的列表。
 
-  ```json tab="Python"
+  ```json tab="Python" tab-group="code-demo"
   [{
     "name": "image_embedding",
     "data_type": "VECTOR_FP32",
@@ -297,7 +297,7 @@ console.log(collection.stats);
 <Accordions type="single">
   <Accordion title="示例">
 
-  ```json tab="Python"
+  ```json tab="Python" tab-group="code-demo"
   {"doc_count":100, "index_completeness":{"image_embedding":1.000000}}
   ```
 
@@ -328,7 +328,7 @@ console.log(collection.options);
 <Accordions type="single">
   <Accordion title="示例">
 
-  ```json tab="Python"
+  ```json tab="Python" tab-group="code-demo"
   {"enable_mmap":1, "read_only":0}
   ```
 

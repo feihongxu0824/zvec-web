@@ -6,7 +6,6 @@ icon: Rocket
 
 
 import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
-import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
 
 <Callout className="text-base" type="success">
   想动手试试代码示例？欢迎查看 [Jupyter Notebook 教程](/downloads/walkthrough.zip)。它会手把手带你完成一个多模态图片检索的实操示例。
@@ -141,19 +140,20 @@ collection.optimizeSync();
 
 通过 `id` 直接 [获取](../data-operations/fetch/) 一个 Document：
 
-<Tabs items={['Python', 'Node.js']}>
-
-<Tab value="Python">
-
-```python title="获取 document"
+```python tab="Python" title="获取 document" tab-group="code-demo"
 result = collection.fetch(ids="book_1")   # [!code highlight]
 print(result)
+```
+
+```ts tab="Node.js" title="获取 document"
+let result = collection.fetchSync("book_1");  // [!code highlight]
+console.log(result);
 ```
 
 <Accordions type="single">
   <Accordion title="输出示例">
 
-  ```json
+  ```json tab="Python" tab-group="code-demo"
   {
       "book_1": {
           "id": "book_1",
@@ -164,22 +164,7 @@ print(result)
   }
   ```
 
-  </Accordion>
-</Accordions>
-
-</Tab>
-
-<Tab value="Node.js">
-
-```ts title="获取 document"
-let result = collection.fetchSync("book_1");  // [!code highlight]
-console.log(result);
-```
-
-<Accordions type="single">
-  <Accordion title="输出示例">
-
-  ```json
+  ```json tab="Node.js"
   {
       book_1: {
           id: 'book_1',
@@ -193,21 +178,13 @@ console.log(result);
   </Accordion>
 </Accordions>
 
-</Tab>
-
-</Tabs>
-
 ## 向量检索
 
 ### 相似度检索
 
 使用 [`query()`](../data-operations/query/) 检索与给定向量最相似的 Documents：
 
-<Tabs items={['Python', 'Node.js']}>
-
-<Tab value="Python">
-
-```python title="相似度检索"
+```python tab="Python" title="相似度检索" tab-group="code-demo"
 # [!code word:embedding]
 result = collection.query(  # [!code highlight]
     zvec.VectorQuery(
@@ -219,10 +196,20 @@ result = collection.query(  # [!code highlight]
 print(result)
 ```
 
+```ts tab="Node.js" title="相似度检索"
+// [!code word:embedding]
+let result = collection.querySync({   // [!code highlight]
+    fieldName: "embedding",
+    vector: Array(768).fill(0.3),     // 请替换为你实际的向量数据
+    topk: 10
+});
+console.log(result);
+```
+
 <Accordions type="single">
   <Accordion title="输出示例">
 
-  ```json
+  ```json tab="Python" tab-group="code-demo"
   [
       {
           "id": "book_1",
@@ -241,29 +228,7 @@ print(result)
   ]
   ```
 
-  </Accordion>
-</Accordions>
-
-结果按相似度分数排序。
-
-</Tab>
-
-<Tab value="Node.js">
-
-```ts title="相似度检索"
-// [!code word:embedding]
-let result = collection.querySync({   // [!code highlight]
-    fieldName: "embedding",
-    vector: Array(768).fill(0.3),     // 请替换为你实际的向量数据
-    topk: 10
-});
-console.log(result);
-```
-
-<Accordions type="single">
-  <Accordion title="输出示例">
-
-  ```json
+  ```json tab="Node.js"
   [
       {
           id: 'book_1',
@@ -287,19 +252,11 @@ console.log(result);
 
 结果按相似度分数排序。
 
-</Tab>
-
-</Tabs>
-
 ### 带条件过滤的相似度检索
 
 将向量检索与条件过滤结合 — 检索时仅考虑满足条件的 documents：
 
-<Tabs items={['Python', 'Node.js']}>
-
-<Tab value="Python">
-
-```python title="带条件过滤的相似度检索"
+```python tab="Python" title="带条件过滤的相似度检索" tab-group="code-demo"
 # [!code word:embedding]
 result = collection.query(        # [!code highlight]
     zvec.VectorQuery(
@@ -312,10 +269,21 @@ result = collection.query(        # [!code highlight]
 print(result)
 ```
 
+```ts tab="Node.js" title="带条件过滤的相似度检索"
+// [!code word:embedding]
+let result = collection.querySync({     // [!code highlight]
+    fieldName: "embedding",
+    vector: Array(768).fill(0.3),   // 请替换为你实际的向量数据
+    topk: 10,
+    filter: "publish_year > 1936"       // [!code highlight]
+});
+console.log(result);
+```
+
 <Accordions type="single">
   <Accordion title="输出示例">
 
-  ```json
+  ```json tab="Python" tab-group="code-demo"
   [
       {
           "id": "book_5",
@@ -334,28 +302,7 @@ print(result)
   ]
   ```
 
-  </Accordion>
-</Accordions>
-
-</Tab>
-
-<Tab value="Node.js">
-
-```ts title="带条件过滤的相似度检索"
-// [!code word:embedding]
-let result = collection.querySync({     // [!code highlight]
-    fieldName: "embedding",
-    vector: Array(768).fill(0.3),   // 请替换为你实际的向量数据
-    topk: 10,
-    filter: "publish_year > 1936"       // [!code highlight]
-});
-console.log(result);
-```
-
-<Accordions type="single">
-  <Accordion title="输出示例">
-
-  ```json
+  ```json tab="Node.js"
   [
       {
           id: 'book_5',
@@ -376,10 +323,6 @@ console.log(result);
 
   </Accordion>
 </Accordions>
-
-</Tab>
-
-</Tabs>
 
 ## 查看 Collection 信息
 

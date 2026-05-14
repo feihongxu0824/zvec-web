@@ -6,7 +6,6 @@ icon: Rocket
 
 
 import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
-import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
 
 <Callout className="text-base" type="success">
   Want to explore the code examples **interactively**? Check out our [Jupyter Notebook walkthrough](/downloads/walkthrough.zip) that demonstrates **Zvec** in action — including a hands-on multi-modal image search example.
@@ -141,19 +140,20 @@ collection.optimizeSync();
 
 [Fetch](../data-operations/fetch/) a document directly by its `id`:
 
-<Tabs items={['Python', 'Node.js']}>
-
-<Tab value="Python">
-
-```python title="Fetch a document"
+```python tab="Python" title="Fetch a document" tab-group="code-demo"
 result = collection.fetch(ids="book_1")   # [!code highlight]
 print(result)
+```
+
+```ts tab="Node.js" title="Fetch a document"
+let result = collection.fetchSync("book_1");  // [!code highlight]
+console.log(result);
 ```
 
 <Accordions type="single">
   <Accordion title="Example Output">
 
-  ```json
+  ```json tab="Python" tab-group="code-demo"
   {
       "book_1": {
           "id": "book_1",
@@ -164,22 +164,7 @@ print(result)
   }
   ```
 
-  </Accordion>
-</Accordions>
-
-</Tab>
-
-<Tab value="Node.js">
-
-```ts title="Fetch a document"
-let result = collection.fetchSync("book_1");  // [!code highlight]
-console.log(result);
-```
-
-<Accordions type="single">
-  <Accordion title="Example Output">
-
-  ```json
+  ```json tab="Node.js"
   {
       book_1: {
           id: 'book_1',
@@ -193,21 +178,13 @@ console.log(result);
   </Accordion>
 </Accordions>
 
-</Tab>
-
-</Tabs>
-
 ## Search with Vectors
 
 ### Basic Similarity Search
 
 Use [`query()`](../data-operations/query/) to find documents most similar to a given vector embedding:
 
-<Tabs items={['Python', 'Node.js']}>
-
-<Tab value="Python">
-
-```python title="Basic similarity search"
+```python tab="Python" title="Basic similarity search" tab-group="code-demo"
 # [!code word:embedding]
 result = collection.query(  # [!code highlight]
     zvec.VectorQuery(
@@ -219,10 +196,20 @@ result = collection.query(  # [!code highlight]
 print(result)
 ```
 
+```ts tab="Node.js" title="Basic similarity search"
+// [!code word:embedding]
+let result = collection.querySync({   // [!code highlight]
+    fieldName: "embedding",
+    vector: Array(768).fill(0.3),     // Replace with your actual vector
+    topk: 10
+});
+console.log(result);
+```
+
 <Accordions type="single">
   <Accordion title="Example Output">
 
-  ```json
+  ```json tab="Python" tab-group="code-demo"
   [
       {
           "id": "book_1",
@@ -241,29 +228,7 @@ print(result)
   ]
   ```
 
-  </Accordion>
-</Accordions>
-
-Results are ranked by similarity score.
-
-</Tab>
-
-<Tab value="Node.js">
-
-```ts title="Basic similarity search"
-// [!code word:embedding]
-let result = collection.querySync({   // [!code highlight]
-    fieldName: "embedding",
-    vector: Array(768).fill(0.3),     // Replace with your actual vector
-    topk: 10
-});
-console.log(result);
-```
-
-<Accordions type="single">
-  <Accordion title="Example Output">
-
-  ```json
+  ```json tab="Node.js"
   [
       {
           id: 'book_1',
@@ -287,19 +252,11 @@ console.log(result);
 
 Results are ranked by similarity score.
 
-</Tab>
-
-</Tabs>
-
 ### Filtered Similarity Search
 
 Combine vector search with conditional filters — only matching documents are considered during search:
 
-<Tabs items={['Python', 'Node.js']}>
-
-<Tab value="Python">
-
-```python title="Filtered similarity search"
+```python tab="Python" title="Filtered similarity search" tab-group="code-demo"
 # [!code word:embedding]
 result = collection.query(        # [!code highlight]
     zvec.VectorQuery(
@@ -312,10 +269,21 @@ result = collection.query(        # [!code highlight]
 print(result)
 ```
 
+```ts tab="Node.js" title="Filtered similarity search"
+// [!code word:embedding]
+let result = collection.querySync({     // [!code highlight]
+    fieldName: "embedding",
+    vector: Array(768).fill(0.3),   // Replace with your actual vector
+    topk: 10,
+    filter: "publish_year > 1936"       // [!code highlight]
+});
+console.log(result);
+```
+
 <Accordions type="single">
   <Accordion title="Example Output">
 
-  ```json
+  ```json tab="Python" tab-group="code-demo"
   [
       {
           "id": "book_5",
@@ -334,28 +302,7 @@ print(result)
   ]
   ```
 
-  </Accordion>
-</Accordions>
-
-</Tab>
-
-<Tab value="Node.js">
-
-```ts title="Filtered similarity search"
-// [!code word:embedding]
-let result = collection.querySync({     // [!code highlight]
-    fieldName: "embedding",
-    vector: Array(768).fill(0.3),   // Replace with your actual vector
-    topk: 10,
-    filter: "publish_year > 1936"       // [!code highlight]
-});
-console.log(result);
-```
-
-<Accordions type="single">
-  <Accordion title="Example Output">
-
-  ```json
+  ```json tab="Node.js"
   [
       {
           id: 'book_5',
@@ -376,10 +323,6 @@ console.log(result);
 
   </Accordion>
 </Accordions>
-
-</Tab>
-
-</Tabs>
 
 ## Inspect a Collection
 

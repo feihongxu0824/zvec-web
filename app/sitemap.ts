@@ -11,35 +11,18 @@ const BUILD_TIME = new Date();
 export default function sitemap(): MetadataRoute.Sitemap {
   const entries: MetadataRoute.Sitemap = [];
 
-  const newestByLang: Record<string, Date | undefined> = {};
+  // Home pages — composed from many source files (layouts, components,
+  // translations); no single reliable "last modified" signal. Per Google's
+  // sitemap guidelines, omit `lastmod` rather than provide an inaccurate value.
   for (const lang of i18n.languages) {
-    const dates: Array<Date | undefined> = [];
-    for (const p of source.getPages(lang)) {
-      const mtime = getGitMtime(p.absolutePath);
-      if (mtime) dates.push(mtime);
-    }
-    for (const p of blog.getPages(lang)) {
-      dates.push(
-        latestDate(getGitMtime(p.absolutePath), p.data.date),
-      );
-    }
-    newestByLang[lang] = latestDate(...dates);
+    entries.push({ url: `${SITE_URL}/${lang}/` });
   }
 
-  // Home pages
+  // API reference pages — content is generated at build time from external
+  // packages (zvec pip/npm); no in-repo source file reflects its true mtime.
+  // Omit `lastmod` for the same reason as the home pages.
   for (const lang of i18n.languages) {
-    entries.push({
-      url: `${SITE_URL}/${lang}/`,
-      lastModified: newestByLang[lang] ?? BUILD_TIME,
-    });
-  }
-
-  // API reference pages (no source MDX; use newest per-language content time)
-  for (const lang of i18n.languages) {
-    entries.push({
-      url: `${SITE_URL}/${lang}/api-reference/`,
-      lastModified: newestByLang[lang] ?? BUILD_TIME,
-    });
+    entries.push({ url: `${SITE_URL}/${lang}/api-reference/` });
   }
 
   // Documentation pages — lastmod from git commit time of the source MDX.

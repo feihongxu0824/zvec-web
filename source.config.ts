@@ -6,6 +6,7 @@ import {
   defineDocs,
 } from 'fumadocs-mdx/config';
 import rehypeKatex from 'rehype-katex';
+import remarkDirective from 'remark-directive';
 import remarkMath from 'remark-math';
 import { z } from 'zod';
 
@@ -43,7 +44,7 @@ export const blogPosts = defineCollections({
 
 export default defineConfig({
   mdxOptions: {
-    remarkPlugins: [remarkMath, remarkSteps],
+    remarkPlugins: [remarkMath, remarkDirective, remarkSteps],
     // Place it at first, it should be executed before the syntax highlighter
     rehypePlugins: (v) => [rehypeKatex, ...v],
   },

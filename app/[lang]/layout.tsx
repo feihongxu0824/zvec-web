@@ -33,8 +33,27 @@ const organizationJsonLd = {
   name: 'Zvec',
   url: SITE_URL,
   logo: `${SITE_URL}/img/zvec-logo-light.png`,
+  parentOrganization: {
+    '@type': 'Organization',
+    name: 'Alibaba Group',
+    url: 'https://www.alibabagroup.com/',
+    sameAs: [
+      'https://en.wikipedia.org/wiki/Alibaba_Group',
+      'https://www.linkedin.com/company/chinese-alibaba-group/',
+      'https://github.com/alibaba',
+    ],
+  },
+  department: {
+    '@type': 'Organization',
+    name: 'Tongyi Lab',
+    sameAs: [
+      'https://x.com/Ali_TongyiLab',
+    ],
+  },
   sameAs: [
     'https://github.com/alibaba/zvec',
+    'https://pypi.org/project/zvec/',
+    'https://www.npmjs.com/package/@zvec/zvec',
   ],
 };
 

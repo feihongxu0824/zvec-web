@@ -1,0 +1,33 @@
+---
+title: AI-Friendly
+extendedTitle: AI-Friendly Docs
+icon: FileText
+---
+
+Every page on this site is available as clean markdown — ready to feed to AI agents like [**Qoder**](https://qoder.com/).
+
+## URLs
+
+| URL | What you get |
+| --- | ------------ |
+| [`/llms.txt`](https://zvec.org/llms.txt) | Index of all pages for AI agents |
+| `/mdx/{lang}/docs/{path}.md` | A single page as markdown |
+
+**Examples:**
+
+- `https://zvec.org/mdx/en/docs/db/quickstart.md`
+- `https://zvec.org/mdx/en/docs/db/collections/create/schema.md`
+
+### Usage
+
+Give your AI agent a prompt like this:
+
+```plain
+Read https://zvec.org/llms.txt to get the documentation index for Zvec.
+Then read the markdown pages you need.
+For example, start with the quickstart page to learn how to set up the project.
+```
+
+## Copy Button
+
+Every page on this site has a **Copy Page** button — same content as the `/mdx/` endpoints.

@@ -44,7 +44,7 @@ export default async function Page(props: PageProps<'/[lang]/docs/[[...slug]]'>)
   };
 
   const MDX = page.data.body;
-  const markdownUrl = `/mdx${page.url}.mdx`;
+  const markdownUrl = `/mdx${page.url}.md`;
   const hasReference =
     page.data.pythonApiReference || page.data.nodejsApiReference;
 

@@ -1,0 +1,33 @@
+---
+title: AI 友好
+extendedTitle: AI 友好文档
+icon: FileText
+---
+
+本网站的每个页面都提供了完整的 Markdown 版本，可直接提供给 [**Qoder**](https://qoder.com/) 等 AI 编程助手使用。
+
+## URL
+
+| URL | 内容 |
+| --- | --- |
+| [`/llms.txt`](https://zvec.org/llms.txt) | 所有页面的索引，可供 AI 助手使用 |
+| `/mdx/{lang}/docs/{path}.md` | 单个页面的 Markdown |
+
+**示例：**
+
+- `https://zvec.org/mdx/zh/docs/db/quickstart.md`
+- `https://zvec.org/mdx/zh/docs/db/collections/create/schema.md`
+
+### 使用方式
+
+给您的 AI 助手一个类似这样的提示：
+
+```plain
+读取 https://zvec.org/llms.txt 来获取 Zvec 的文档索引。
+然后根据需要读取对应的 Markdown 页面。
+例如，先从 quickstart 页面开始了解如何搭建项目。
+```
+
+## 复制按钮
+
+每个页面顶部都有 **复制页面** 按钮，内容与 `/mdx/` 端点提供的内容一致。

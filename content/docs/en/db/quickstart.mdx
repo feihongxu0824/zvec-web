@@ -133,7 +133,12 @@ collection.optimize()
 
 ```ts tab="Node.js" title="Optimize a collection"
 // [!code word:optimizeSync]
+// Sync
 collection.optimizeSync();
+
+// [!code word:optimize]
+// Async
+await collection.optimize();
 ```
 
 ## Retrieve a Document by ID
@@ -198,12 +203,21 @@ print(result)
 
 ```ts tab="Node.js" title="Basic similarity search"
 // [!code word:embedding]
+// Sync
 let result = collection.querySync({   // [!code highlight]
     fieldName: "embedding",
     vector: Array(768).fill(0.3),     // Replace with your actual vector
     topk: 10
 });
 console.log(result);
+
+// Async
+let resultAsync = await collection.query({   // [!code highlight]
+    fieldName: "embedding",
+    vector: Array(768).fill(0.3),     // Replace with your actual vector
+    topk: 10
+});
+console.log(resultAsync);
 ```
 
 <Accordions type="single">
@@ -271,6 +285,7 @@ print(result)
 
 ```ts tab="Node.js" title="Filtered similarity search"
 // [!code word:embedding]
+// Sync
 let result = collection.querySync({     // [!code highlight]
     fieldName: "embedding",
     vector: Array(768).fill(0.3),   // Replace with your actual vector
@@ -278,6 +293,15 @@ let result = collection.querySync({     // [!code highlight]
     filter: "publish_year > 1936"       // [!code highlight]
 });
 console.log(result);
+
+// Async
+let resultAsync = await collection.query({     // [!code highlight]
+    fieldName: "embedding",
+    vector: Array(768).fill(0.3),   // Replace with your actual vector
+    topk: 10,
+    filter: "publish_year > 1936"       // [!code highlight]
+});
+console.log(resultAsync);
 ```
 
 <Accordions type="single">
@@ -373,7 +397,12 @@ collection.delete_by_filter(filter="publish_year < 1900")
 
 ```ts tab="Node.js" title="Delete documents by filter condition"
 // [!code word:deleteByFilterSync]
+// Sync
 collection.deleteByFilterSync("publish_year < 1900");
+
+// [!code word:deleteByFilter]
+// Async
+await collection.deleteByFilter("publish_year < 1900");
 ```
 
 ---

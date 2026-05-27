@@ -133,7 +133,12 @@ collection.optimize()
 
 ```ts tab="Node.js" title="优化 collection"
 // [!code word:optimizeSync]
+// 同步
 collection.optimizeSync();
+
+// [!code word:optimize]
+// 异步
+await collection.optimize();
 ```
 
 ## 按 ID 获取 Document
@@ -198,12 +203,21 @@ print(result)
 
 ```ts tab="Node.js" title="相似度检索"
 // [!code word:embedding]
+// 同步
 let result = collection.querySync({   // [!code highlight]
     fieldName: "embedding",
     vector: Array(768).fill(0.3),     // 请替换为你实际的向量数据
     topk: 10
 });
 console.log(result);
+
+// 异步
+let resultAsync = await collection.query({   // [!code highlight]
+    fieldName: "embedding",
+    vector: Array(768).fill(0.3),     // 请替换为你实际的向量数据
+    topk: 10
+});
+console.log(resultAsync);
 ```
 
 <Accordions type="single">
@@ -271,6 +285,7 @@ print(result)
 
 ```ts tab="Node.js" title="带条件过滤的相似度检索"
 // [!code word:embedding]
+// 同步
 let result = collection.querySync({     // [!code highlight]
     fieldName: "embedding",
     vector: Array(768).fill(0.3),   // 请替换为你实际的向量数据
@@ -278,6 +293,15 @@ let result = collection.querySync({     // [!code highlight]
     filter: "publish_year > 1936"       // [!code highlight]
 });
 console.log(result);
+
+// 异步
+let resultAsync = await collection.query({     // [!code highlight]
+    fieldName: "embedding",
+    vector: Array(768).fill(0.3),   // 请替换为你实际的向量数据
+    topk: 10,
+    filter: "publish_year > 1936"       // [!code highlight]
+});
+console.log(resultAsync);
 ```
 
 <Accordions type="single">
@@ -373,7 +397,12 @@ collection.delete_by_filter(filter="publish_year < 1900")
 
 ```ts tab="Node.js" title="按筛选条件删除 document"
 // [!code word:deleteByFilterSync]
+// 同步
 collection.deleteByFilterSync("publish_year < 1900");
+
+// [!code word:deleteByFilter]
+// 异步
+await collection.deleteByFilter("publish_year < 1900");
 ```
 
 ---

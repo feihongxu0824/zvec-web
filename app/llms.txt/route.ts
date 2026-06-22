@@ -3,7 +3,7 @@ import { SITE_URL } from '@/lib/constants';
 export const revalidate = false;
 
 export async function GET() {
-    const content = `# Zvec
+  const content = `# Zvec
 
 > Zvec is a lightweight, lightning-fast, in-process vector database by Alibaba. Built for AI applications with simple APIs, powerful indexing, and zero configuration.
 
@@ -29,8 +29,10 @@ Zvec runs entirely in-process — no server, daemon, or external infrastructure 
   - [HNSW Index](${SITE_URL}/en/docs/db/concepts/vector-index/hnsw-index/)
   - [HNSW-RaBitQ Index](${SITE_URL}/en/docs/db/concepts/vector-index/hnsw-rabitq-index/)
   - [IVF Index](${SITE_URL}/en/docs/db/concepts/vector-index/ivf-index/)
+  - [DiskANN Index](${SITE_URL}/en/docs/db/concepts/vector-index/diskann-index/)
   - [Quantization](${SITE_URL}/en/docs/db/concepts/vector-index/quantization/)
 - [Inverted Index](${SITE_URL}/en/docs/db/concepts/inverted-index/): Scalar field filtering
+- [Full-Text Index](${SITE_URL}/en/docs/db/concepts/fts-index/): Text retrieval with tokenization, inverted indexes, and BM25 ranking
 
 #### Collections
 
@@ -56,6 +58,7 @@ Zvec runs entirely in-process — no server, daemon, or external infrastructure 
   - [Multi Vector](${SITE_URL}/en/docs/db/data-operations/query/multi-vector/): Multi-vector search
   - [Filter](${SITE_URL}/en/docs/db/data-operations/query/filter/): Filtered search
   - [Hybrid](${SITE_URL}/en/docs/db/data-operations/query/hybrid/): Hybrid search (dense + sparse)
+  - [Full-Text Search](${SITE_URL}/en/docs/db/data-operations/query/fts/): BM25-ranked text search with phrase matching and boolean operators
   - [Group](${SITE_URL}/en/docs/db/data-operations/query/group/): Grouped search
 - [Fetch](${SITE_URL}/en/docs/db/data-operations/fetch/): Fetch documents by ID
 
@@ -73,6 +76,11 @@ Zvec runs entirely in-process — no server, daemon, or external infrastructure 
 - [MCP Server](${SITE_URL}/en/docs/ai/mcp/): Expose Zvec as a tool for AI agents via MCP
 - [Skills](${SITE_URL}/en/docs/ai/skills/): Define reusable, agent-friendly operations
 
+## Blog
+
+- [English blog index](${SITE_URL}/en/blog/): Product updates, architecture notes, and applied Zvec examples
+- [Chinese blog index](${SITE_URL}/zh/blog/): Chinese-language product updates, architecture notes, and applied Zvec examples
+
 ## Per-Page Markdown
 
 Every documentation page is available as clean markdown at a predictable URL:
@@ -89,7 +97,7 @@ Use these URLs to feed individual pages as context to AI coding agents (Cursor, 
 - [API Reference](${SITE_URL}/api-reference/): Python and Node.js API reference
 `;
 
-    return new Response(content, {
-        headers: { 'Content-Type': 'text/plain; charset=utf-8' },
-    });
+  return new Response(content, {
+    headers: { 'Content-Type': 'text/plain; charset=utf-8' },
+  });
 }

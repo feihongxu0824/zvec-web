@@ -36,9 +36,9 @@ jobs:
 
       - name: Save PR metadata
         run: |
-          mkdir -p ./out/.pr-meta
-          echo "${{ github.event.pull_request.number || github.event.inputs.pr_number }}" > ./out/.pr-meta/pr_number
-          echo "${{ github.sha }}" > ./out/.pr-meta/head_sha
+          mkdir -p ./out/_pr-meta
+          echo "${{ github.event.pull_request.number || github.event.inputs.pr_number }}" > ./out/_pr-meta/pr_number
+          echo "${{ github.sha }}" > ./out/_pr-meta/head_sha
 
       - uses: actions/upload-artifact@v4
         with:

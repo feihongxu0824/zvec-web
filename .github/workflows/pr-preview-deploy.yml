@@ -26,14 +26,14 @@ jobs:
       - name: Read PR metadata from artifact
         id: meta
         run: |
-          PR_NUMBER=$(cat ./out/.pr-meta/pr_number)
-          HEAD_SHA=$(cat ./out/.pr-meta/head_sha)
+          PR_NUMBER=$(cat ./out/_pr-meta/pr_number)
+          HEAD_SHA=$(cat ./out/_pr-meta/head_sha)
           echo "pr_number=$PR_NUMBER" >> "$GITHUB_OUTPUT"
           echo "head_sha=$HEAD_SHA" >> "$GITHUB_OUTPUT"
           echo "PR number: $PR_NUMBER, HEAD SHA: $HEAD_SHA"
 
       - name: Clean up metadata before deploy
-        run: rm -rf ./out/.pr-meta
+        run: rm -rf ./out/_pr-meta
 
       # Block Pages Functions for fork PR security
       - name: Block Pages Functions for external preview

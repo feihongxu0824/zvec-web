@@ -52,14 +52,46 @@ In this pipeline, MobileCLIP maps images and text into the same vector space, wh
 ## The Key to On-Device Experience: Light, Fast, and Offline
 The current version has been installed and launched successfully on real devices, including a Xiaomi 14 Ultra running Android 15 and an iPhone SE 3. On the Xiaomi 14 Ultra, we used a release build to index and search 10,239 local test images. The performance and resource data are as follows:
 
-| Dimension | Metric | Result |
-| :---: | :---: | :---: |
-| Data scale | Local photos | 10,239 |
-| Search latency | End-to-end search | 117-131 ms |
-| | Zvec recall | ~1 ms |
-| Resource usage | Zvec index files | ~24.0 MB |
-| | Zvec index memory delta | ~37.0 MB |
-| | Overall app memory usage | ~875.0 MB |
+<div className="not-prose my-6 overflow-x-auto">
+  <table style={{ width: "760px", maxWidth: "100%", margin: "0 auto", borderCollapse: "separate", borderSpacing: 0, overflow: "hidden", border: "1px solid rgba(148, 163, 184, 0.28)", borderRadius: "12px", fontSize: "0.95rem" }}>
+    <thead>
+      <tr style={{ background: "rgba(148, 163, 184, 0.08)" }}>
+        <th style={{ width: "28%", padding: "12px 18px", textAlign: "left", fontWeight: 700 }}>Dimension</th>
+        <th style={{ width: "44%", padding: "12px 18px", textAlign: "left", fontWeight: 700 }}>Metric</th>
+        <th style={{ width: "28%", padding: "12px 18px", textAlign: "right", fontWeight: 700 }}>Result</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td style={{ padding: "12px 18px", borderTop: "1px solid rgba(148, 163, 184, 0.22)", color: "var(--muted-foreground)" }}>Data scale</td>
+        <td style={{ padding: "12px 18px", borderTop: "1px solid rgba(148, 163, 184, 0.22)" }}>Local photos</td>
+        <td style={{ padding: "12px 18px", borderTop: "1px solid rgba(148, 163, 184, 0.22)", textAlign: "right", fontVariantNumeric: "tabular-nums" }}>10,239</td>
+      </tr>
+      <tr>
+        <td rowSpan={2} style={{ padding: "12px 18px", borderTop: "1px solid rgba(148, 163, 184, 0.22)", color: "var(--muted-foreground)" }}>Search latency</td>
+        <td style={{ padding: "12px 18px", borderTop: "1px solid rgba(148, 163, 184, 0.22)" }}>End-to-end search</td>
+        <td style={{ padding: "12px 18px", borderTop: "1px solid rgba(148, 163, 184, 0.22)", textAlign: "right", fontVariantNumeric: "tabular-nums" }}>117-131 ms</td>
+      </tr>
+      <tr>
+        <td style={{ padding: "12px 18px", borderTop: "1px solid rgba(148, 163, 184, 0.14)" }}>Zvec recall</td>
+        <td style={{ padding: "12px 18px", borderTop: "1px solid rgba(148, 163, 184, 0.14)", textAlign: "right", fontVariantNumeric: "tabular-nums" }}>~1 ms</td>
+      </tr>
+      <tr>
+        <td rowSpan={3} style={{ padding: "12px 18px", borderTop: "1px solid rgba(148, 163, 184, 0.22)", color: "var(--muted-foreground)" }}>Resource usage</td>
+        <td style={{ padding: "12px 18px", borderTop: "1px solid rgba(148, 163, 184, 0.22)" }}>Zvec index files</td>
+        <td style={{ padding: "12px 18px", borderTop: "1px solid rgba(148, 163, 184, 0.22)", textAlign: "right", fontVariantNumeric: "tabular-nums" }}>~24.0 MB</td>
+      </tr>
+      <tr>
+        <td style={{ padding: "12px 18px", borderTop: "1px solid rgba(148, 163, 184, 0.14)" }}>Zvec index memory delta</td>
+        <td style={{ padding: "12px 18px", borderTop: "1px solid rgba(148, 163, 184, 0.14)", textAlign: "right", fontVariantNumeric: "tabular-nums" }}>~37.0 MB</td>
+      </tr>
+      <tr>
+        <td style={{ padding: "12px 18px", borderTop: "1px solid rgba(148, 163, 184, 0.14)" }}>Overall app memory usage</td>
+        <td style={{ padding: "12px 18px", borderTop: "1px solid rgba(148, 163, 184, 0.14)", textAlign: "right", fontVariantNumeric: "tabular-nums" }}>~875.0 MB</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
 
 
 A search takes about 117-131 ms from query input to returned results, with Zvec local recall taking around 1 ms. In this pipeline, most of the latency comes from text embedding computation; retrieval itself is not the bottleneck for the user experience.

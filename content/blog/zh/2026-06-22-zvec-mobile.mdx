@@ -52,14 +52,46 @@ PocketSearch 是一个端侧个人数据搜索产品雏形，目前支持 Androi
 ## 端侧体验的关键：轻、快、离线
 当前版本已经在小米 14 Ultra（Android 15）和 iPhone SE 3 上完成真机安装与启动验证。其中，我们在小米 14 Ultra 上使用正式构建版本，对 10239 张本地测试图片完成索引并进行搜索，得到如下性能与资源数据：
 
-| 维度 | 指标 | 结果 |
-| :---: | :---: | :---: |
-| 数据规模 | 本地图片数 | 10239 张 |
-| 搜索延迟 | 端到端搜索 |  117-131 ms |
-| | Zvec 召回 |  ~1 ms |
-| 资源占用 | Zvec 索引文件 |  ~24.0 MB |
-| | Zvec 索引内存增量 | ~37.0 MB |
-| | App 整体内存占用 | ~875.0 MB |
+<div className="not-prose my-6 overflow-x-auto">
+  <table style={{ width: "760px", maxWidth: "100%", margin: "0 auto", borderCollapse: "separate", borderSpacing: 0, overflow: "hidden", border: "1px solid rgba(148, 163, 184, 0.28)", borderRadius: "12px", fontSize: "0.95rem" }}>
+    <thead>
+      <tr style={{ background: "rgba(148, 163, 184, 0.08)" }}>
+        <th style={{ width: "28%", padding: "12px 18px", textAlign: "left", fontWeight: 700 }}>维度</th>
+        <th style={{ width: "44%", padding: "12px 18px", textAlign: "left", fontWeight: 700 }}>指标</th>
+        <th style={{ width: "28%", padding: "12px 18px", textAlign: "right", fontWeight: 700 }}>结果</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td style={{ padding: "12px 18px", borderTop: "1px solid rgba(148, 163, 184, 0.22)", color: "var(--muted-foreground)" }}>数据规模</td>
+        <td style={{ padding: "12px 18px", borderTop: "1px solid rgba(148, 163, 184, 0.22)" }}>本地图片数</td>
+        <td style={{ padding: "12px 18px", borderTop: "1px solid rgba(148, 163, 184, 0.22)", textAlign: "right", fontVariantNumeric: "tabular-nums" }}>10239 张</td>
+      </tr>
+      <tr>
+        <td rowSpan={2} style={{ padding: "12px 18px", borderTop: "1px solid rgba(148, 163, 184, 0.22)", color: "var(--muted-foreground)" }}>搜索延迟</td>
+        <td style={{ padding: "12px 18px", borderTop: "1px solid rgba(148, 163, 184, 0.22)" }}>端到端搜索</td>
+        <td style={{ padding: "12px 18px", borderTop: "1px solid rgba(148, 163, 184, 0.22)", textAlign: "right", fontVariantNumeric: "tabular-nums" }}>117-131 ms</td>
+      </tr>
+      <tr>
+        <td style={{ padding: "12px 18px", borderTop: "1px solid rgba(148, 163, 184, 0.14)" }}>Zvec 召回</td>
+        <td style={{ padding: "12px 18px", borderTop: "1px solid rgba(148, 163, 184, 0.14)", textAlign: "right", fontVariantNumeric: "tabular-nums" }}>~1 ms</td>
+      </tr>
+      <tr>
+        <td rowSpan={3} style={{ padding: "12px 18px", borderTop: "1px solid rgba(148, 163, 184, 0.22)", color: "var(--muted-foreground)" }}>资源占用</td>
+        <td style={{ padding: "12px 18px", borderTop: "1px solid rgba(148, 163, 184, 0.22)" }}>Zvec 索引文件</td>
+        <td style={{ padding: "12px 18px", borderTop: "1px solid rgba(148, 163, 184, 0.22)", textAlign: "right", fontVariantNumeric: "tabular-nums" }}>~24.0 MB</td>
+      </tr>
+      <tr>
+        <td style={{ padding: "12px 18px", borderTop: "1px solid rgba(148, 163, 184, 0.14)" }}>Zvec 索引内存增量</td>
+        <td style={{ padding: "12px 18px", borderTop: "1px solid rgba(148, 163, 184, 0.14)", textAlign: "right", fontVariantNumeric: "tabular-nums" }}>~37.0 MB</td>
+      </tr>
+      <tr>
+        <td style={{ padding: "12px 18px", borderTop: "1px solid rgba(148, 163, 184, 0.14)" }}>App 整体内存占用</td>
+        <td style={{ padding: "12px 18px", borderTop: "1px solid rgba(148, 163, 184, 0.14)", textAlign: "right", fontVariantNumeric: "tabular-nums" }}>~875.0 MB</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
 
 
 一次搜索从输入 query 到返回结果大约在 117-131 ms，其中 Zvec 本地召回约 1 ms。在这条链路里，主要耗时来自文本 embedding 计算，检索本身没有成为体验瓶颈。

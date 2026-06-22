@@ -3,6 +3,16 @@ name: PR Preview Build
 on:
   pull_request:
     types: [opened, synchronize, reopened]
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: 'PR number to build preview for'
+        required: true
+        type: string
+
+concurrency:
+  group: pr-preview-${{ github.event.pull_request.number || github.event.inputs.pr_number }}
+  cancel-in-progress: true
 
 permissions:
   contents: read
@@ -11,15 +21,24 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout PR ref
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || format('refs/pull/{0}/head', github.event.inputs.pr_number) }}
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 24
           cache: npm
 
       - run: npm ci
       - run: npm run build
+
+      - name: Save PR metadata
+        run: |
+          mkdir -p ./out/.pr-meta
+          echo "${{ github.event.pull_request.number || github.event.inputs.pr_number }}" > ./out/.pr-meta/pr_number
+          echo "${{ github.sha }}" > ./out/.pr-meta/head_sha
 
       - uses: actions/upload-artifact@v4
         with:

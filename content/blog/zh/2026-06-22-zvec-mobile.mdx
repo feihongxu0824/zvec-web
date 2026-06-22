@@ -1,0 +1,137 @@
+---
+title: "把 Zvec 装进口袋：从相册智能搜索开始"
+date: "2026-06-22"
+image: /img/blog/2026-06-22-zvec-mobile/cover.jpeg
+description: Zvec 0.4.0 支持移动端与 Dart/Flutter SDK。本文以 PocketSearch 为例，展示 Zvec 如何在 Android 和 iOS 上支撑端侧本地检索。
+---
+
+import { ImageZoom } from "fumadocs-ui/components/image-zoom";
+
+> Zvec 是一款轻量级嵌入式向量数据库，专为终端侧设计，具备开箱即用、资源可配置、极致性能以及多样化向量能力四大核心优势。Zvec 在 0.4.0 版本中加入移动端支持，提供 Dart/Flutter SDK，支持 Android arm64-v8a 和 iOS arm64。<sup><font style="color:#8a8f98;">[0]</font></sup>
+>
+
+过去一年，AI 正在明显向移动端靠近。Apple Intelligence 把 “personal context” 放进 iPhone、iPad 和 Mac 的系统级 AI 叙事里；Google Gemini Live 也开始把摄像头和屏幕共享带进移动端 AI 体验，让模型可以围绕用户当前看到的现实场景或屏幕内容进行对话。<sup><font style="color:#8a8f98;">[1][2]</font></sup>
+
+这些变化指向同一个趋势：移动端 AI 不再只是一个聊天入口，它正在变得更贴近用户所处的设备、场景和任务。而一旦 AI 要参与真实任务，就绕不开用户手机里的本地数据：一张截图、一封邮件、一次旅行相关的照片和备忘录，或者 Agent 下一步行动所需要的上下文。
+
+这些本地数据分散在相册、短信、邮件、备忘录、文件和第三方 app 里；同时，它们又天然隐私敏感，不适合轻易离开设备。
+
+所以我们认为，移动端 AI 应用需要一层**可以直接嵌入 app 的本地检索能力**。它在设备本地完成索引、召回、过滤和排序，并在需要时同时服务 用户 和 Agent。
+
+Zvec 0.4.0 的移动端支持，正是为了解决这一痛点：让应用能够在 Android 和 iOS 设备上实现本地化检索能力。
+
+## Zvec：面向端侧的检索基础设施
+在移动端场景里，Zvec 承担的是应用内部的**本地检索层**：应用把本地数据转成可检索的索引，查询在设备本地完成，不需要额外部署远端向量数据库。
+
+围绕这些本地数据，Zvec 可以承载语义向量检索、scalar filter、FTS、多路召回和融合排序等能力，让 app 把端侧数据组织成可查询、可过滤、可融合的本地上下文。
+
+为了验证这件事，我们做了 PocketSearch。<sup><font style="color:#8a8f98;">[3]</font></sup>
+
+<p align="center">
+  <ImageZoom src="/img/blog/2026-06-22-zvec-mobile/demo.gif" alt="PocketSearch demo" width={1000} height={1000} />
+</p>
+
+> 本文演示与测试使用的 `10K+` 本地图库，基于 Unsplash Lite 公开数据集构造为手机相册数据集，不包含用户个人隐私照片。<sup><font style="color:#8a8f98;">[6]</font></sup>
+>
+
+## PocketSearch：从相册开始
+PocketSearch 是一个端侧个人数据搜索产品雏形，目前支持 Android 和 iOS，用户可以安装到真机上体验。它的长期愿景，是让用户可以**一键搜索手机里的图库、备忘录、短信、邮件、文件和更多第三方 app 数据**，同时给 Agent 提供统一的本地上下文检索接口。
+
+第一站选择相册，是因为它通常是手机里体量最大、增长最快的数据源之一，而且早就不只是“拍出来的照片”。截图、票据、二维码、证件、白板、聊天记录截图和各种临时保存的图片，让相册变成了一个信息密度很高、但很难用文件名或分类组织起来的个人数据入口。
+
+用户记得的往往不是精确时间，而是“画面里有什么”或“这张图当时是做什么用的”。PocketSearch 允许用户直接用自然语言描述一张照片，比如 `boarding pass screenshot`、`whiteboard notes about search architecture` 或 `receipt from a coffee shop`，然后在手机本地返回相关图片。这个过程不依赖用户提前整理相册，也不需要把照片上传到云端；关键词、标签、OCR 等信息仍然可以作为额外通路参与融合，而不是被排除在外。
+
+当前版本包含两条关键路径：离线索引时，图片在端侧被编码成 embedding，并写入 Zvec 本地索引；搜索时，用户输入的文本会被编码到同一个向量空间，再由 Zvec 在本地完成召回并返回结果。
+
+<p align="center">
+  <ImageZoom src="/img/blog/2026-06-22-zvec-mobile/architecture.png" alt="PocketSearch on-device retrieval pipeline" width={1000} height={1000} />
+</p>
+
+在这条链路里，MobileCLIP 负责把图片和文本映射到同一个向量空间，Zvec 负责本地索引和召回。<sup><font style="color:#8a8f98;">[4]</font></sup>
+
+## 端侧体验的关键：轻、快、离线
+当前版本已经在小米 14 Ultra（Android 15）和 iPhone SE 3 上完成真机安装与启动验证。其中，我们在小米 14 Ultra 上使用正式构建版本，对 10239 张本地测试图片完成索引并进行搜索，得到如下性能与资源数据：
+
+| 维度 | 指标 | 结果 |
+| :---: | :---: | :---: |
+| 数据规模 | 本地图片数 | 10239 张 |
+| 搜索延迟 | 端到端搜索 |  117-131 ms |
+| | Zvec 召回 |  ~1 ms |
+| 资源占用 | Zvec 索引文件 |  ~24.0 MB |
+| | Zvec 索引内存增量 | ~37.0 MB |
+| | App 整体内存占用 | ~875.0 MB |
+
+
+一次搜索从输入 query 到返回结果大约在 117-131 ms，其中 Zvec 本地召回约 1 ms。在这条链路里，主要耗时来自文本 embedding 计算，检索本身没有成为体验瓶颈。
+
+**默认搜索路径不需要访问网络**。图片、向量和相册元数据都留在设备本地；MobileCLIP 通过 MNN 在本地完成 embedding，Zvec 在本地完成索引和召回。<sup><font style="color:#8a8f98;">[4][5]</font></sup>
+
+资源占用也比较清晰。单看 Zvec 索引，10239 张图片对应的索引文件约 24.0 MB，运行时带来的内存增量约 37.0 MB。其中，原始 embedding 数据本身约 20.0 MB（10239 × 512 × 4 bytes），其余部分来自向量索引结构和字段存储。
+
+表格里的 875 MB 是 PocketSearch 整个 App 运行起来之后的内存占用参考，并不是 Zvec 单独占用。这个数字里还包括：
+
++ **端侧模型与 MNN runtime**：当前版本会加载 MobileCLIP image encoder 和 text encoder，这是整体内存的主要来源。
++ **Flutter 应用与图片处理链路**：包括界面运行、相册访问、缩略图读取、图片预处理和结果展示。
++ **Zvec 本地索引**：包括图片 embedding、向量索引结构以及与过滤相关的 scalar fields。
+
+也就是说，虽然当前版本整体内存看起来很高，但是主要来自“模型常驻 + 完整 App 链路”，而不是一次 Zvec 查询本身。真实产品里，可以继续通过模型选择、懒加载、索引生命周期管理等方式，把端侧资源占用控制在更合适的范围内。
+
+这对移动端 AI 应用很重要。端侧场景通常不只是“能不能跑”，还要看它是否足够快、是否能离线、是否能控制资源占用、是否能减少服务端依赖，以及是否适合隐私敏感数据。对于个人相册、备忘录、邮件、短信这类数据，用户真正关心的也不只是“服务端如何保护我的数据”，而是“这些数据能否不离开我的设备”。
+
+## 从查询理解到多路召回
+当前版本的 PocketSearch 先验证了“图片 embedding + 本地向量召回”这条主链路。在此基础上，相册搜索还有两条很自然的演进方向：一条是让 query 更好地表达用户意图，另一条是把相册里的更多信息组织进本地索引。
+
+**Query 改写**已经作为可选能力集成到当前版本里。用户不会总是输入一个简单的视觉短语，而是经常把“画面内容、时间、地点”混在一句话里，比如：
+
+> buildings I photographed in Beijing last summer
+>
+
+开启 query rewrite 后，PocketSearch 会把这类表达改写成更适合检索的结构化形式：
+
+```json
+{
+  "visual": "buildings and architecture in Beijing",
+  "date_start": "2025-06-01",
+  "date_end": "2025-09-01",
+  "geo": {
+    "lat_min": 39.4,
+    "lat_max": 41.1,
+    "lng_min": 115.4,
+    "lng_max": 117.5
+  }
+}
+```
+
+其中，`visual` 会进入向量召回，`date_start` / `date_end` 和 `geo` 会转成 Zvec scalar filter。这样，PocketSearch 就可以把视觉内容召回和时间、地理位置过滤结合起来。
+
+这个能力默认关闭；默认模式下，PocketSearch 仍然是一条**纯端侧、纯离线**的搜索链路。
+
+另一条还在继续推进的方向，是把更多可检索信息放进本地索引。时间、位置这类系统或 EXIF 元数据可以直接读取；但相册里还有大量截图、票据、菜单、聊天记录截图和二维码，仅靠视觉 embedding 并不能覆盖所有信息。要把这些内容变成可检索信息，往往还需要 OCR、caption、分类、实体抽取等模型参与。
+
+后续可以把系统元数据、OCR 文本、视觉标签、实体等信息写入本地索引，并结合 FTS、向量检索等多路召回，再通过融合排序把结果组织起来。到了这一步，相册搜索不再只是视觉相似度检索，而是更接近端侧的上下文检索。
+
+## 从相册走向端侧上下文
+相册只是 PocketSearch 接入的第一个数据源。
+
+继续扩展到备忘录、邮件、短信、文件和更多第三方 app 数据时，每类数据的接入方式都会不同：有的需要文本提取，有的需要 OCR，有的需要 embedding、元数据读取或实体抽取。
+
+但进入检索层之后，问题会变得相似：**如何把这些信息组织成可查询的本地索引，如何在端侧完成召回、过滤和排序，如何让用户搜索入口和 Agent 接口都能拿到结构化、可溯源的结果**。
+
+在 PocketSearch 的架构里，Zvec 负责把上游模型和系统 API 产出的 embedding、文本与元数据组织成本地索引，并在查询时完成召回、过滤和排序。当数据源继续扩展时，上游解析方式会变化，但 Zvec 在检索层承担的角色保持稳定。
+
+如果你也在做 mobile AI、端侧 RAG、本地 memory 或隐私敏感搜索，可以看看 Zvec 和 PocketSearch。
+
+## 参考链接
+[0] Zvec: [https://github.com/alibaba/zvec](https://github.com/alibaba/zvec)
+
+[1] Apple Intelligence: [https://www.apple.com/newsroom/2024/06/introducing-apple-intelligence-for-iphone-ipad-and-mac/](https://www.apple.com/newsroom/2024/06/introducing-apple-intelligence-for-iphone-ipad-and-mac/)
+
+[2] Gemini Live camera and screen sharing: [https://blog.google/products-and-platforms/products/gemini/gemini-app-updates-io-2025/](https://blog.google/products-and-platforms/products/gemini/gemini-app-updates-io-2025/)
+
+[3] PocketSearch: [https://github.com/feihongxu0824/PocketSearch](https://github.com/feihongxu0824/PocketSearch)
+
+[4] MobileCLIP: [https://github.com/apple/ml-mobileclip](https://github.com/apple/ml-mobileclip)
+
+[5] MNN: [https://github.com/alibaba/MNN](https://github.com/alibaba/MNN)
+
+[6] Unsplash Lite Dataset: [https://unsplash.com/data](https://unsplash.com/data)

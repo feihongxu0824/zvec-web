@@ -7,10 +7,10 @@ description: Zvec 0.4.0 支持移动端与 Dart/Flutter SDK。本文以 PocketSe
 
 import { ImageZoom } from "fumadocs-ui/components/image-zoom";
 
-> Zvec 是一款轻量级嵌入式向量数据库，专为终端侧设计，具备开箱即用、资源可配置、极致性能以及多样化向量能力四大核心优势。Zvec 在 0.4.0 版本中加入移动端支持，提供 Dart/Flutter SDK，支持 Android arm64-v8a 和 iOS arm64。<sup><font style="color:#8a8f98;">[0]</font></sup>
+> Zvec 是一款轻量级嵌入式向量数据库，专为终端侧设计，具备开箱即用、资源可配置、极致性能以及多样化向量能力四大核心优势。Zvec 在 0.4.0 版本中加入移动端支持，提供 Dart/Flutter SDK，支持 Android arm64-v8a 和 iOS arm64。<sup>[0]</sup>
 >
 
-过去一年，AI 正在明显向移动端靠近。Apple Intelligence 把 “personal context” 放进 iPhone、iPad 和 Mac 的系统级 AI 叙事里；Google Gemini Live 也开始把摄像头和屏幕共享带进移动端 AI 体验，让模型可以围绕用户当前看到的现实场景或屏幕内容进行对话。<sup><font style="color:#8a8f98;">[1][2]</font></sup>
+过去一年，AI 正在明显向移动端靠近。Apple Intelligence 把 “personal context” 放进 iPhone、iPad 和 Mac 的系统级 AI 叙事里；Google Gemini Live 也开始把摄像头和屏幕共享带进移动端 AI 体验，让模型可以围绕用户当前看到的现实场景或屏幕内容进行对话。<sup>[1][2]</sup>
 
 这些变化指向同一个趋势：移动端 AI 不再只是一个聊天入口，它正在变得更贴近用户所处的设备、场景和任务。而一旦 AI 要参与真实任务，就绕不开用户手机里的本地数据：一张截图、一封邮件、一次旅行相关的照片和备忘录，或者 Agent 下一步行动所需要的上下文。
 
@@ -25,13 +25,13 @@ Zvec 0.4.0 的移动端支持，正是为了解决这一痛点：让应用能够
 
 围绕这些本地数据，Zvec 可以承载语义向量检索、scalar filter、FTS、多路召回和融合排序等能力，让 app 把端侧数据组织成可查询、可过滤、可融合的本地上下文。
 
-为了验证这件事，我们做了 PocketSearch。<sup><font style="color:#8a8f98;">[3]</font></sup>
+为了验证这件事，我们做了 PocketSearch。<sup>[3]</sup>
 
 <p align="center">
   <ImageZoom src="/img/blog/2026-06-22-zvec-mobile/demo.gif" alt="PocketSearch demo" width={1000} height={1000} />
 </p>
 
-> 本文演示与测试使用的 `10K+` 本地图库，基于 Unsplash Lite 公开数据集构造为手机相册数据集，不包含用户个人隐私照片。<sup><font style="color:#8a8f98;">[6]</font></sup>
+> 本文演示与测试使用的 `10K+` 本地图库，基于 Unsplash Lite 公开数据集构造为手机相册数据集，不包含用户个人隐私照片。<sup>[6]</sup>
 >
 
 ## PocketSearch：从相册开始
@@ -47,7 +47,7 @@ PocketSearch 是一个端侧个人数据搜索产品雏形，目前支持 Androi
   <ImageZoom src="/img/blog/2026-06-22-zvec-mobile/architecture.png" alt="PocketSearch on-device retrieval pipeline" width={1000} height={1000} />
 </p>
 
-在这条链路里，MobileCLIP 负责把图片和文本映射到同一个向量空间，Zvec 负责本地索引和召回。<sup><font style="color:#8a8f98;">[4]</font></sup>
+在这条链路里，MobileCLIP 负责把图片和文本映射到同一个向量空间，Zvec 负责本地索引和召回。<sup>[4]</sup>
 
 ## 端侧体验的关键：轻、快、离线
 当前版本已经在小米 14 Ultra（Android 15）和 iPhone SE 3 上完成真机安装与启动验证。其中，我们在小米 14 Ultra 上使用正式构建版本，对 10239 张本地测试图片完成索引并进行搜索，得到如下性能与资源数据：
@@ -64,7 +64,7 @@ PocketSearch 是一个端侧个人数据搜索产品雏形，目前支持 Androi
 
 一次搜索从输入 query 到返回结果大约在 117-131 ms，其中 Zvec 本地召回约 1 ms。在这条链路里，主要耗时来自文本 embedding 计算，检索本身没有成为体验瓶颈。
 
-**默认搜索路径不需要访问网络**。图片、向量和相册元数据都留在设备本地；MobileCLIP 通过 MNN 在本地完成 embedding，Zvec 在本地完成索引和召回。<sup><font style="color:#8a8f98;">[4][5]</font></sup>
+**默认搜索路径不需要访问网络**。图片、向量和相册元数据都留在设备本地；MobileCLIP 通过 MNN 在本地完成 embedding，Zvec 在本地完成索引和召回。<sup>[4][5]</sup>
 
 资源占用也比较清晰。单看 Zvec 索引，10239 张图片对应的索引文件约 24.0 MB，运行时带来的内存增量约 37.0 MB。其中，原始 embedding 数据本身约 20.0 MB（10239 × 512 × 4 bytes），其余部分来自向量索引结构和字段存储。
 

@@ -7,10 +7,10 @@ description: Zvec 0.4.0 brings mobile support and a Dart/Flutter SDK. This post 
 
 import { ImageZoom } from "fumadocs-ui/components/image-zoom";
 
-> Zvec is a lightweight embedded vector database designed for on-device scenarios. It offers four core advantages: ready-to-use integration, configurable resource usage, high performance, and a diverse set of vector capabilities. In version 0.4.0, Zvec added mobile support with a Dart/Flutter SDK, supporting Android arm64-v8a and iOS arm64.<sup><font style="color:#8a8f98;">[0]</font></sup>
+> Zvec is a lightweight embedded vector database designed for on-device scenarios. It offers four core advantages: ready-to-use integration, configurable resource usage, high performance, and a diverse set of vector capabilities. In version 0.4.0, Zvec added mobile support with a Dart/Flutter SDK, supporting Android arm64-v8a and iOS arm64.<sup>[0]</sup>
 >
 
-Over the past year, AI has been moving noticeably closer to mobile devices. Apple Intelligence has brought “personal context” into the system-level AI narrative for iPhone, iPad, and Mac. Google Gemini Live has also introduced camera and screen sharing into mobile AI experiences, allowing models to converse around the real-world scene or screen content the user is currently seeing.<sup><font style="color:#8a8f98;">[1][2]</font></sup>
+Over the past year, AI has been moving noticeably closer to mobile devices. Apple Intelligence has brought “personal context” into the system-level AI narrative for iPhone, iPad, and Mac. Google Gemini Live has also introduced camera and screen sharing into mobile AI experiences, allowing models to converse around the real-world scene or screen content the user is currently seeing.<sup>[1][2]</sup>
 
 These changes point to the same trend: mobile AI is no longer just a chat entry point. It is becoming more closely tied to the device, context, and task at hand. And once AI starts participating in real tasks, it inevitably needs to deal with the local data on a user’s phone: a screenshot, an email, photos and notes from a trip, or the context an Agent needs for its next step.
 
@@ -25,13 +25,13 @@ In mobile scenarios, Zvec serves as the app’s internal **local retrieval layer
 
 Around this local data, Zvec can support semantic vector retrieval, scalar filters, FTS, hybrid recall, and fusion ranking, enabling apps to organize on-device data into local context that can be queried, filtered, and combined.
 
-To validate this direction, we built PocketSearch.<sup><font style="color:#8a8f98;">[3]</font></sup>
+To validate this direction, we built PocketSearch.<sup>[3]</sup>
 
 <p align="center">
   <ImageZoom src="/img/blog/2026-06-22-zvec-mobile/demo.gif" alt="PocketSearch demo" width={1000} height={1000} />
 </p>
 
-> The `10K+` local photo gallery used in the demo and tests in this article was constructed from the public Unsplash Lite dataset as a phone photo library. It does not contain any user’s private personal photos.<sup><font style="color:#8a8f98;">[6]</font></sup>
+> The `10K+` local photo gallery used in the demo and tests in this article was constructed from the public Unsplash Lite dataset as a phone photo library. It does not contain any user’s private personal photos.<sup>[6]</sup>
 >
 
 ## PocketSearch: Starting with Photos
@@ -47,7 +47,7 @@ The current version includes two key paths. During offline indexing, images are 
   <ImageZoom src="/img/blog/2026-06-22-zvec-mobile/architecture.png" alt="PocketSearch on-device retrieval pipeline" width={1000} height={1000} />
 </p>
 
-In this pipeline, MobileCLIP maps images and text into the same vector space, while Zvec handles local indexing and recall.<sup><font style="color:#8a8f98;">[4]</font></sup>
+In this pipeline, MobileCLIP maps images and text into the same vector space, while Zvec handles local indexing and recall.<sup>[4]</sup>
 
 ## The Key to On-Device Experience: Light, Fast, and Offline
 The current version has been installed and launched successfully on real devices, including a Xiaomi 14 Ultra running Android 15 and an iPhone SE 3. On the Xiaomi 14 Ultra, we used a release build to index and search 10,239 local test images. The performance and resource data are as follows:
@@ -64,7 +64,7 @@ The current version has been installed and launched successfully on real devices
 
 A search takes about 117-131 ms from query input to returned results, with Zvec local recall taking around 1 ms. In this pipeline, most of the latency comes from text embedding computation; retrieval itself is not the bottleneck for the user experience.
 
-**The default search path does not need network access**. Images, vectors, and photo metadata all stay on the device. MobileCLIP computes embeddings locally through MNN, and Zvec performs indexing and recall locally.<sup><font style="color:#8a8f98;">[4][5]</font></sup>
+**The default search path does not need network access**. Images, vectors, and photo metadata all stay on the device. MobileCLIP computes embeddings locally through MNN, and Zvec performs indexing and recall locally.<sup>[4][5]</sup>
 
 Resource usage is also clear. Looking only at the Zvec index, 10,239 images correspond to about 24.0 MB of index files and about 37.0 MB of runtime memory delta. The raw embedding data itself is about 20.0 MB (10,239 × 512 × 4 bytes), while the rest comes from the vector index structure and field storage.
 

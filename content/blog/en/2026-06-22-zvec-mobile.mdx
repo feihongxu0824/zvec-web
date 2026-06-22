@@ -28,7 +28,7 @@ Around this local data, Zvec can support semantic vector retrieval, scalar filte
 To validate this direction, we built PocketSearch.<sup>[3]</sup>
 
 <p align="center">
-  <ImageZoom src="/img/blog/2026-06-22-zvec-mobile/demo.gif" alt="PocketSearch demo" width={1000} height={1000} />
+  <ImageZoom src="/img/blog/2026-06-22-zvec-mobile/demo.gif" alt="PocketSearch demo" width={420} height={805} />
 </p>
 
 > The `10K+` local photo gallery used in the demo and tests in this article was constructed from the public Unsplash Lite dataset as a phone photo library. It does not contain any user’s private personal photos.<sup>[6]</sup>
@@ -44,7 +44,7 @@ What users remember is often not the exact time, but “what was in the image”
 The current version includes two key paths. During offline indexing, images are encoded into embeddings on the device and written into a local Zvec index. During search, the user’s text query is encoded into the same vector space, and Zvec performs local recall and returns the results.
 
 <p align="center">
-  <ImageZoom src="/img/blog/2026-06-22-zvec-mobile/architecture.png" alt="PocketSearch on-device retrieval pipeline" width={1000} height={1000} />
+  <ImageZoom src="/img/blog/2026-06-22-zvec-mobile/architecture.png" alt="PocketSearch on-device retrieval pipeline" width={760} height={466} />
 </p>
 
 In this pipeline, MobileCLIP maps images and text into the same vector space, while Zvec handles local indexing and recall.<sup>[4]</sup>

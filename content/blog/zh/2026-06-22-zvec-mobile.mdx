@@ -28,7 +28,7 @@ Zvec 0.4.0 的移动端支持，正是为了解决这一痛点：让应用能够
 为了验证这件事，我们做了 PocketSearch。<sup>[3]</sup>
 
 <p align="center">
-  <ImageZoom src="/img/blog/2026-06-22-zvec-mobile/demo.gif" alt="PocketSearch demo" width={1000} height={1000} />
+  <ImageZoom src="/img/blog/2026-06-22-zvec-mobile/demo.gif" alt="PocketSearch demo" width={420} height={805} />
 </p>
 
 > 本文演示与测试使用的 `10K+` 本地图库，基于 Unsplash Lite 公开数据集构造为手机相册数据集，不包含用户个人隐私照片。<sup>[6]</sup>
@@ -44,7 +44,7 @@ PocketSearch 是一个端侧个人数据搜索产品雏形，目前支持 Androi
 当前版本包含两条关键路径：离线索引时，图片在端侧被编码成 embedding，并写入 Zvec 本地索引；搜索时，用户输入的文本会被编码到同一个向量空间，再由 Zvec 在本地完成召回并返回结果。
 
 <p align="center">
-  <ImageZoom src="/img/blog/2026-06-22-zvec-mobile/architecture.png" alt="PocketSearch on-device retrieval pipeline" width={1000} height={1000} />
+  <ImageZoom src="/img/blog/2026-06-22-zvec-mobile/architecture.png" alt="PocketSearch on-device retrieval pipeline" width={760} height={466} />
 </p>
 
 在这条链路里，MobileCLIP 负责把图片和文本映射到同一个向量空间，Zvec 负责本地索引和召回。<sup>[4]</sup>

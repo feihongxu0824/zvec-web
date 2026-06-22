@@ -7,10 +7,10 @@ description: Zvec 0.4.0 brings mobile support and a Dart/Flutter SDK. This post 
 
 import { ImageZoom } from "fumadocs-ui/components/image-zoom";
 
-> Zvec is a lightweight embedded vector database designed for on-device scenarios. It offers four core advantages: ready-to-use integration, configurable resource usage, high performance, and a diverse set of vector capabilities. In version 0.4.0, Zvec added mobile support with a Dart/Flutter SDK, supporting Android arm64-v8a and iOS arm64.<sup>[0]</sup>
+> Zvec is a lightweight embedded vector database designed for on-device scenarios. It offers four core advantages: ready-to-use integration, configurable resource usage, high performance, and a diverse set of vector capabilities. In version 0.4.0, Zvec added mobile support with a Dart/Flutter SDK, supporting Android arm64-v8a and iOS arm64.<sup><a href="#ref-0">[0]</a></sup>
 >
 
-Over the past year, AI has been moving noticeably closer to mobile devices. Apple Intelligence has brought “personal context” into the system-level AI narrative for iPhone, iPad, and Mac. Google Gemini Live has also introduced camera and screen sharing into mobile AI experiences, allowing models to converse around the real-world scene or screen content the user is currently seeing.<sup>[1][2]</sup>
+Over the past year, AI has been moving noticeably closer to mobile devices. Apple Intelligence has brought “personal context” into the system-level AI narrative for iPhone, iPad, and Mac. Google Gemini Live has also introduced camera and screen sharing into mobile AI experiences, allowing models to converse around the real-world scene or screen content the user is currently seeing.<sup><a href="#ref-1">[1]</a><a href="#ref-2">[2]</a></sup>
 
 These changes point to the same trend: mobile AI is no longer just a chat entry point. It is becoming more closely tied to the device, context, and task at hand. And once AI starts participating in real tasks, it inevitably needs to deal with the local data on a user’s phone: a screenshot, an email, photos and notes from a trip, or the context an Agent needs for its next step.
 
@@ -25,13 +25,13 @@ In mobile scenarios, Zvec serves as the app’s internal **local retrieval layer
 
 Around this local data, Zvec can support semantic vector retrieval, scalar filters, FTS, hybrid recall, and fusion ranking, enabling apps to organize on-device data into local context that can be queried, filtered, and combined.
 
-To validate this direction, we built PocketSearch.<sup>[3]</sup>
+To validate this direction, we built PocketSearch.<sup><a href="#ref-3">[3]</a></sup>
 
 <p align="center">
   <ImageZoom src="/img/blog/2026-06-22-zvec-mobile/demo.gif" alt="PocketSearch demo" width={420} height={805} />
 </p>
 
-> The `10K+` local photo gallery used in the demo and tests in this article was constructed from the public Unsplash Lite dataset as a phone photo library. It does not contain any user’s private personal photos.<sup>[6]</sup>
+> The `10K+` local photo gallery used in the demo and tests in this article was constructed from the public Unsplash Lite dataset as a phone photo library. It does not contain any user’s private personal photos.<sup><a href="#ref-6">[6]</a></sup>
 >
 
 ## PocketSearch: Starting with Photos
@@ -47,7 +47,7 @@ The current version includes two key paths. During offline indexing, images are 
   <ImageZoom src="/img/blog/2026-06-22-zvec-mobile/architecture.png" alt="PocketSearch on-device retrieval pipeline" width={760} height={466} />
 </p>
 
-In this pipeline, MobileCLIP maps images and text into the same vector space, while Zvec handles local indexing and recall.<sup>[4]</sup>
+In this pipeline, MobileCLIP maps images and text into the same vector space, while Zvec handles local indexing and recall.<sup><a href="#ref-4">[4]</a></sup>
 
 ## The Key to On-Device Experience: Light, Fast, and Offline
 The current version has been installed and launched successfully on real devices, including a Xiaomi 14 Ultra running Android 15 and an iPhone SE 3. On the Xiaomi 14 Ultra, we used a release build to index and search 10,239 local test images. The performance and resource data are as follows:
@@ -96,7 +96,7 @@ The current version has been installed and launched successfully on real devices
 
 A search takes about 117-131 ms from query input to returned results, with Zvec local recall taking around 1 ms. In this pipeline, most of the latency comes from text embedding computation; retrieval itself is not the bottleneck for the user experience.
 
-**The default search path does not need network access**. Images, vectors, and photo metadata all stay on the device. MobileCLIP computes embeddings locally through MNN, and Zvec performs indexing and recall locally.<sup>[4][5]</sup>
+**The default search path does not need network access**. Images, vectors, and photo metadata all stay on the device. MobileCLIP computes embeddings locally through MNN, and Zvec performs indexing and recall locally.<sup><a href="#ref-4">[4]</a><a href="#ref-5">[5]</a></sup>
 
 Resource usage is also clear. Looking only at the Zvec index, 10,239 images correspond to about 24.0 MB of index files and about 37.0 MB of runtime memory delta. The raw embedding data itself is about 20.0 MB (10,239 × 512 × 4 bytes), while the rest comes from the vector index structure and field storage.
 
@@ -156,11 +156,11 @@ If you are also working on mobile AI, on-device RAG, local memory, or privacy-se
 ## References
 
 <ul className="not-prose mt-4 space-y-2 text-sm leading-6 text-fd-muted-foreground [&_a]:break-all [&_a]:text-fd-primary hover:[&_a]:underline">
-  <li>[0] Zvec: <a href="https://github.com/alibaba/zvec">https://github.com/alibaba/zvec</a></li>
-  <li>[1] Apple Intelligence: <a href="https://www.apple.com/newsroom/2024/06/introducing-apple-intelligence-for-iphone-ipad-and-mac/">https://www.apple.com/newsroom/2024/06/introducing-apple-intelligence-for-iphone-ipad-and-mac/</a></li>
-  <li>[2] Gemini Live camera and screen sharing: <a href="https://blog.google/products-and-platforms/products/gemini/gemini-app-updates-io-2025/">https://blog.google/products-and-platforms/products/gemini/gemini-app-updates-io-2025/</a></li>
-  <li>[3] PocketSearch: <a href="https://github.com/feihongxu0824/PocketSearch">https://github.com/feihongxu0824/PocketSearch</a></li>
-  <li>[4] MobileCLIP: <a href="https://github.com/apple/ml-mobileclip">https://github.com/apple/ml-mobileclip</a></li>
-  <li>[5] MNN: <a href="https://github.com/alibaba/MNN">https://github.com/alibaba/MNN</a></li>
-  <li>[6] Unsplash Lite Dataset: <a href="https://unsplash.com/data">https://unsplash.com/data</a></li>
+  <li id="ref-0" className="scroll-mt-24">[0] Zvec: <a href="https://github.com/alibaba/zvec">https://github.com/alibaba/zvec</a></li>
+  <li id="ref-1" className="scroll-mt-24">[1] Apple Intelligence: <a href="https://www.apple.com/newsroom/2024/06/introducing-apple-intelligence-for-iphone-ipad-and-mac/">https://www.apple.com/newsroom/2024/06/introducing-apple-intelligence-for-iphone-ipad-and-mac/</a></li>
+  <li id="ref-2" className="scroll-mt-24">[2] Gemini Live camera and screen sharing: <a href="https://blog.google/products-and-platforms/products/gemini/gemini-app-updates-io-2025/">https://blog.google/products-and-platforms/products/gemini/gemini-app-updates-io-2025/</a></li>
+  <li id="ref-3" className="scroll-mt-24">[3] PocketSearch: <a href="https://github.com/feihongxu0824/PocketSearch">https://github.com/feihongxu0824/PocketSearch</a></li>
+  <li id="ref-4" className="scroll-mt-24">[4] MobileCLIP: <a href="https://github.com/apple/ml-mobileclip">https://github.com/apple/ml-mobileclip</a></li>
+  <li id="ref-5" className="scroll-mt-24">[5] MNN: <a href="https://github.com/alibaba/MNN">https://github.com/alibaba/MNN</a></li>
+  <li id="ref-6" className="scroll-mt-24">[6] Unsplash Lite Dataset: <a href="https://unsplash.com/data">https://unsplash.com/data</a></li>
 </ul>

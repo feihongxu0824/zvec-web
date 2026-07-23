@@ -13,7 +13,7 @@ export const translations = i18n
   .translations()
   .extend(uiTranslations())
   .preset('zh', zhCN())
-  .add('ui', {
+  .add({
     en: {
       displayName: 'English',
     },

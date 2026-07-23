@@ -101,9 +101,6 @@ export default async function Page(props: PageProps<'/[lang]/docs/[[...slug]]'>)
     <JsonLd data={techArticleJsonLd} />
     <JsonLd data={breadcrumbJsonLd} />
     <DocsPage
-      tableOfContent={{
-        style: 'clerk',
-      }}
       toc={page.data.toc}
       full={page.data.full}
     >

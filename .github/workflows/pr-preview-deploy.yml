@@ -16,7 +16,20 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/download-artifact@v4
+      - name: Checkout trusted deployment tooling
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install trusted deployment tooling
+        run: npm ci
+
+      - uses: actions/download-artifact@v8
         with:
           name: pages-dist
           path: ./out
@@ -26,10 +39,18 @@ jobs:
       - name: Read PR metadata from artifact
         id: meta
         run: |
-          PR_NUMBER=$(cat ./out/_pr-meta/pr_number)
-          HEAD_SHA=$(cat ./out/_pr-meta/head_sha)
-          echo "pr_number=$PR_NUMBER" >> "$GITHUB_OUTPUT"
-          echo "head_sha=$HEAD_SHA" >> "$GITHUB_OUTPUT"
+          PR_NUMBER="$(tr -d '\n' < ./out/_pr-meta/pr_number)"
+          HEAD_SHA="$(tr -d '\n' < ./out/_pr-meta/head_sha)"
+          [[ "$PR_NUMBER" =~ ^[0-9]+$ ]] || {
+            echo "::error::Invalid PR number in preview artifact."
+            exit 1
+          }
+          [[ "$HEAD_SHA" =~ ^[0-9a-f]{40}$ ]] || {
+            echo "::error::Invalid commit SHA in preview artifact."
+            exit 1
+          }
+          printf 'pr_number=%s\n' "$PR_NUMBER" >> "$GITHUB_OUTPUT"
+          printf 'head_sha=%s\n' "$HEAD_SHA" >> "$GITHUB_OUTPUT"
           echo "PR number: $PR_NUMBER, HEAD SHA: $HEAD_SHA"
 
       - name: Clean up metadata before deploy
@@ -50,12 +71,12 @@ jobs:
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
         run: |
-          OUTPUT=$(npx wrangler pages deploy ./out \
+          OUTPUT=$(npx --no-install wrangler pages deploy ./out \
             --project-name "$CF_PROJECT_NAME" \
             --branch "pr-${PR_NUMBER}" \
             --commit-hash "$HEAD_SHA" \
             --commit-message "Preview for PR #${PR_NUMBER}")
-          
+
           echo "$OUTPUT"
           URL=$(echo "$OUTPUT" | grep -Eo 'https://[^ ]+\.pages\.dev' | head -n 1)
           echo "url=$URL" >> "$GITHUB_OUTPUT"

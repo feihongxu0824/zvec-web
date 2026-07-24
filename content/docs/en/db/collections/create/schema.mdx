@@ -190,20 +190,35 @@ vector_schema = zvec.VectorSchema(  # [!code highlight]
     dimension=768,
     # [!code word:HnswIndexParam]
     index_param=zvec.HnswIndexParam(
-        metric_type=zvec.MetricType.COSINE, ef_construction=700, quantize_type=QuantizeType.INT8, quantizer_param=QuantizerParam(enable_rotate=True)
+        metric_type=zvec.MetricType.COSINE,
+        ef_construction=700,
+        quantize_type=zvec.QuantizeType.INT8,
+        quantizer_param=zvec.QuantizerParam(enable_rotate=True),
     ),
 )
 ```
 
 ```ts tab="Node.js" title="Define a vector embedding"
-import { ZVecDataType, ZVecIndexType, ZVecMetricType, ZVecVectorSchema } from "@zvec/zvec";
+import {
+    ZVecDataType,
+    ZVecIndexType,
+    ZVecMetricType,
+    ZVecQuantizeType,
+    ZVecVectorSchema,
+} from "@zvec/zvec";
 
 const vectorSchema: ZVecVectorSchema = {  // [!code highlight]
     name: "dense_vector_example",
     dataType: ZVecDataType.VECTOR_FP32,
     dimension: 768,
     // [!code word:HNSW]
-    indexParams: { indexType: ZVecIndexType.HNSW, metricType: ZVecMetricType.COSINE, efConstruction: 700 }
+    indexParams: {
+        indexType: ZVecIndexType.HNSW,
+        metricType: ZVecMetricType.COSINE,
+        efConstruction: 700,
+        quantizeType: ZVecQuantizeType.INT8,
+        quantizerParams: { enableRotate: true },
+    },
 };
 ```
 

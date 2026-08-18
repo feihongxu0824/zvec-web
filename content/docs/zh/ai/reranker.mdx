@@ -143,30 +143,23 @@ for doc in reranked_docs:
 </Callout>
 
 ```python
-from zvec.extension import RrfReRanker
 from zvec import Doc
+from zvec.extension import RrfReRanker
 
 # 准备多个检索结果
-documents = {
-    "vector1": [
-        Doc(
-            id="1",
-            score=0.8,
-        ),
-        Doc(
-            id="2",
-            score=0.7,
-        ),
-        Doc(
-            id="3",
-            score=0.75,
-        ),
+query_results = [
+    [
+        Doc(id="1", score=0.8),
+        Doc(id="2", score=0.7),
     ],
-}
+    [
+        Doc(id="2", score=0.9),
+        Doc(id="3", score=0.75),
+    ],
+]
 
-reranker = RrfReRanker(topn=3)
-# 融合结果
-fused_results = reranker.rerank(documents)
+reranker = RrfReRanker(rank_constant=60)
+fused_results = reranker.rerank(query_results, topn=3)
 ```
 
 ### WeightedReRanker - 加权融合
@@ -174,35 +167,49 @@ fused_results = reranker.rerank(documents)
 根据权重融合多个有评分的检索结果。
 
 ```python
-from zvec.extension import WeightedReRanker
-from zvec import Doc
+import zvec
 
-# 准备多个检索结果
-documents = {
-    "vector1": [
-        Doc(
-            id="1",
-            score=0.8,
-        ),
-        Doc(
-            id="2",
-            score=0.7,
-        ),
-        Doc(
-            id="3",
-            score=0.75,
-        ),
-    ],
-}
+# 准备多个检索结果及其对应的向量 Schema
+query_results = [
+    [zvec.Doc(id="1", score=0.8), zvec.Doc(id="2", score=0.7)],
+    [zvec.Doc(id="2", score=0.9), zvec.Doc(id="3", score=0.75)],
+]
+fields = [
+    zvec.VectorSchema(
+        name="dense_embedding",
+        data_type=zvec.DataType.VECTOR_FP32,
+        dimension=3,
+        index_param=zvec.HnswIndexParam(metric_type=zvec.MetricType.IP),
+    ),
+    zvec.VectorSchema(
+        name="sparse_embedding",
+        data_type=zvec.DataType.SPARSE_VECTOR_FP32,
+        index_param=zvec.HnswIndexParam(metric_type=zvec.MetricType.IP),
+    ),
+]
 
-reranker = WeightedReRanker(
-    weights=[1.0],  # 每个结果集的权重
-    topn=3
+reranker = zvec.WeightedReRanker(
+    weights=[0.7, 0.3],  # 按相同顺序为每个结果列表设置一个权重
 )
-
-# 融合结果
-fused_results = reranker.rerank(documents)
+fused_results = reranker.rerank(
+    query_results,
+    topn=3,
+    fields=fields,  # 直接调用 rerank() 时，评分归一化需要此参数
+)
 print(fused_results)
+```
+
+将 `WeightedReRanker` 传给 `Collection.query()` 时，Zvec 会自动获取字段 Schema：
+
+```python
+fused_results = collection.query(
+    queries=[
+        zvec.Query(field_name="dense_embedding", vector=[0.1] * 768),
+        zvec.Query(field_name="sparse_embedding", vector={1: 0.1, 37: 0.43}),
+    ],
+    topk=3,
+    reranker=zvec.WeightedReRanker(weights=[0.7, 0.3]),
+)
 ```
 
 ## 自定义实现指南
@@ -543,15 +550,14 @@ query_vec = dense_emb.embed("machine learning tutorial")
 reranker = DefaultLocalReRanker(
     query="machine learning tutorial",
     rerank_field="content",
-    topn=10
 )
 
-# 召回 top-100（伪代码）
-final_results = zvec.collection.query(
-    queries=Query("dense", vector=query_vec),
+# 召回 top-100，再对候选列表进行重排序
+candidates = collection.query(
+    queries=Query(field_name="dense", vector=query_vec),
     topk=100,
-    reranker=reranker,
 )
+final_results = reranker.rerank([candidates], topn=10)
 ```
 
 ### 多向量融合
@@ -578,15 +584,15 @@ dense_vec = dense_emb.embed(query)
 sparse_vec = sparse_emb.embed(query)
 
 # 使用 RRF 融合结果
-rrf_ranker = RrfReRanker(topn=3)
+rrf_ranker = RrfReRanker(rank_constant=60)
 
-# 使用两种向量分别检索（伪代码）
-final_results = zvec.collection.query(
+# 查询两个向量字段并融合结果
+final_results = collection.query(
     queries=[
-        Query("dense", vector=dense_vec),
-        Query("sparse", vector=sparse_vec),
+        Query(field_name="dense", vector=dense_vec),
+        Query(field_name="sparse", vector=sparse_vec),
     ],
-    topk=10,
+    topk=3,
     reranker=rrf_ranker,
 )
 ```

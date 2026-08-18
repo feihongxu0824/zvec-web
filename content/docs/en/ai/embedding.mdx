@@ -34,7 +34,7 @@ Zvec's embedding system provides ready-to-use **embedding functions** to convert
 ### Embedding Function Types
 
 | Type | Implementation | Description |
-|------|---------------|-------------|
+| ------ | --------------- | ------------- |
 | **Local Dense** | `DefaultLocalDenseEmbedding` | Uses Sentence Transformers with `all-MiniLM-L6-v2` model (384 dimensions, ~80MB) |
 | **Local Sparse** | `DefaultLocalSparseEmbedding` | Uses SPLADE `naver/splade-cocondenser-ensembledistil` model (~100MB) |
 | **BM25** | `BM25EmbeddingFunction` | BM25 algorithm using DashText SDK (local computation, no API key needed) |
@@ -124,7 +124,7 @@ Uses the [Jina Embeddings](https://jina.ai) API to generate dense vectors. The J
 **Available Models:**
 
 | Model | Parameters | Max Length | Dimensions | MTEB English v2 | MMTEB |
-|-------|-----------|------------|------------|-----------------|-------|
+| ------- | ----------- | ------------ | ------------ | ----------------- | ------- |
 | `jina-embeddings-v5-text-small` | 677M | 32768 | 1024 | 71.7 | 67.7 |
 | `jina-embeddings-v5-text-nano` | 239M | 8192 | 768 | 71.0 | 65.5 |
 
@@ -184,7 +184,7 @@ print(f"Dimensions: {len(vector)}")  # 128
 **Supported Tasks:**
 
 | Task | Use Case |
-|------|----------|
+| ------ | ---------- |
 | `retrieval.query` | Encode search queries for retrieval |
 | `retrieval.passage` | Encode documents/passages for retrieval |
 | `text-matching` | Symmetric similarity (e.g., duplicate detection) |
@@ -615,15 +615,15 @@ dense_vec = dense_emb.embed(query)
 sparse_vec = sparse_emb.embed(query)
 
 # Fuse results using RRF
-rrf_ranker = RrfReRanker(topn=3)
+rrf_ranker = RrfReRanker(rank_constant=60)
 
-# Retrieve using both vectors separately (pseudo-code)
-final_results = zvec.collection.query(
+# Query both vector fields and fuse the results
+final_results = collection.query(
     queries=[
-        Query("dense", vector=dense_vec),
-        Query("sparse", vector=sparse_vec),
+        Query(field_name="dense", vector=dense_vec),
+        Query(field_name="sparse", vector=sparse_vec),
     ],
-    topk=10,
+    topk=3,
     reranker=rrf_ranker,
 )
 ```

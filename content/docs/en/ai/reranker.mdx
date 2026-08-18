@@ -143,30 +143,23 @@ Fuses multiple retrieval results using **Reciprocal Rank Fusion (RRF)**.
 </Callout>
 
 ```python
-from zvec.extension import RrfReRanker
 from zvec import Doc
+from zvec.extension import RrfReRanker
 
 # Prepare multiple retrieval results
-documents = {
-    "vector1": [
-        Doc(
-            id="1",
-            score=0.8,
-        ),
-        Doc(
-            id="2",
-            score=0.7,
-        ),
-        Doc(
-            id="3",
-            score=0.75,
-        ),
+query_results = [
+    [
+        Doc(id="1", score=0.8),
+        Doc(id="2", score=0.7),
     ],
-}
+    [
+        Doc(id="2", score=0.9),
+        Doc(id="3", score=0.75),
+    ],
+]
 
-reranker = RrfReRanker(topn=3)
-# Fuse results
-fused_results = reranker.rerank(documents)
+reranker = RrfReRanker(rank_constant=60)
+fused_results = reranker.rerank(query_results, topn=3)
 ```
 
 ### WeightedReRanker - Weighted Fusion
@@ -174,35 +167,49 @@ fused_results = reranker.rerank(documents)
 Fuses multiple scored retrieval results according to weights.
 
 ```python
-from zvec.extension import WeightedReRanker
-from zvec import Doc
+import zvec
 
-# Prepare multiple retrieval results
-documents = {
-    "vector1": [
-        Doc(
-            id="1",
-            score=0.8,
-        ),
-        Doc(
-            id="2",
-            score=0.7,
-        ),
-        Doc(
-            id="3",
-            score=0.75,
-        ),
-    ],
-}
+# Prepare results and their corresponding vector schemas
+query_results = [
+    [zvec.Doc(id="1", score=0.8), zvec.Doc(id="2", score=0.7)],
+    [zvec.Doc(id="2", score=0.9), zvec.Doc(id="3", score=0.75)],
+]
+fields = [
+    zvec.VectorSchema(
+        name="dense_embedding",
+        data_type=zvec.DataType.VECTOR_FP32,
+        dimension=3,
+        index_param=zvec.HnswIndexParam(metric_type=zvec.MetricType.IP),
+    ),
+    zvec.VectorSchema(
+        name="sparse_embedding",
+        data_type=zvec.DataType.SPARSE_VECTOR_FP32,
+        index_param=zvec.HnswIndexParam(metric_type=zvec.MetricType.IP),
+    ),
+]
 
-reranker = WeightedReRanker(
-    weights=[1.0],  # Weights for each result set
-    topn=3
+reranker = zvec.WeightedReRanker(
+    weights=[0.7, 0.3],  # One weight for each result list, in the same order
 )
-
-# Fuse results
-fused_results = reranker.rerank(documents)
+fused_results = reranker.rerank(
+    query_results,
+    topn=3,
+    fields=fields,  # Required for score normalization in standalone rerank()
+)
 print(fused_results)
+```
+
+When `WeightedReRanker` is passed to `Collection.query()`, Zvec obtains the field schemas automatically:
+
+```python
+fused_results = collection.query(
+    queries=[
+        zvec.Query(field_name="dense_embedding", vector=[0.1] * 768),
+        zvec.Query(field_name="sparse_embedding", vector={1: 0.1, 37: 0.43}),
+    ],
+    topk=3,
+    reranker=zvec.WeightedReRanker(weights=[0.7, 0.3]),
+)
 ```
 
 ## Custom Implementation Guide
@@ -543,15 +550,14 @@ query_vec = dense_emb.embed("machine learning tutorial")
 reranker = DefaultLocalReRanker(
     query="machine learning tutorial",
     rerank_field="content",
-    topn=10
 )
 
-# Recall top-100 (pseudo-code)
-final_results = zvec.collection.query(
-    queries=Query("dense", vector=query_vec),
+# Recall top-100, then rerank the candidate list
+candidates = collection.query(
+    queries=Query(field_name="dense", vector=query_vec),
     topk=100,
-    reranker=reranker,
 )
+final_results = reranker.rerank([candidates], topn=10)
 ```
 
 ### Multi-Vector Fusion
@@ -578,15 +584,15 @@ dense_vec = dense_emb.embed(query)
 sparse_vec = sparse_emb.embed(query)
 
 # Fuse results using RRF
-rrf_ranker = RrfReRanker(topn=3)
+rrf_ranker = RrfReRanker(rank_constant=60)
 
-# Retrieve using both vectors separately (pseudo-code)
-final_results = zvec.collection.query(
+# Query both vector fields and fuse the results
+final_results = collection.query(
     queries=[
-        Query("dense", vector=dense_vec),
-        Query("sparse", vector=sparse_vec),
+        Query(field_name="dense", vector=dense_vec),
+        Query(field_name="sparse", vector=sparse_vec),
     ],
-    topk=10,
+    topk=3,
     reranker=rrf_ranker,
 )
 ```

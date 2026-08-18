@@ -34,7 +34,7 @@ Zvec 的 Embedding 系统提供了开箱即用的 **Embedding 函数**，将文�
 ### Embedding 函数类型
 
 | 类型 | 实现 | 描述 |
-|------|---------------|-------------|
+| ------ | --------------- | ------------- |
 | **本地稠密** | `DefaultLocalDenseEmbedding` | 使用 Sentence Transformers 和 `all-MiniLM-L6-v2` 模型（384 维，~80MB） |
 | **本地稀疏** | `DefaultLocalSparseEmbedding` | 使用 SPLADE `naver/splade-cocondenser-ensembledistil` 模型（~100MB） |
 | **BM25** | `BM25EmbeddingFunction` | 使用 DashText SDK 的 BM25 算法（本地计算，无需 API 密钥） |
@@ -124,7 +124,7 @@ vector = embedding_func.embed("Vector database")
 **可用模型：**
 
 | 模型 | 参数量 | 最大长度 | 维度 | MTEB English v2 | MMTEB |
-|-------|-----------|------------|------------|-----------------|-------|
+| ------- | ----------- | ------------ | ------------ | ----------------- | ------- |
 | `jina-embeddings-v5-text-small` | 677M | 32768 | 1024 | 71.7 | 67.7 |
 | `jina-embeddings-v5-text-nano` | 239M | 8192 | 768 | 71.0 | 65.5 |
 
@@ -184,7 +184,7 @@ print(f"Dimensions: {len(vector)}")  # 128
 **支持的任务类型：**
 
 | 任务 | 用途 |
-|------|----------|
+| ------ | ---------- |
 | `retrieval.query` | 为检索编码搜索查询 |
 | `retrieval.passage` | 为检索编码文档/段落 |
 | `text-matching` | 对称相似度（例如重复检测） |
@@ -615,15 +615,15 @@ dense_vec = dense_emb.embed(query)
 sparse_vec = sparse_emb.embed(query)
 
 # 使用 RRF 融合结果
-rrf_ranker = RrfReRanker(topn=3)
+rrf_ranker = RrfReRanker(rank_constant=60)
 
-# 使用两种向量分别检索（伪代码）
-final_results = zvec.collection.query(
+# 查询两个向量字段并融合结果
+final_results = collection.query(
     queries=[
-        Query("dense", vector=dense_vec),
-        Query("sparse", vector=sparse_vec),
+        Query(field_name="dense", vector=dense_vec),
+        Query(field_name="sparse", vector=sparse_vec),
     ],
-    topk=10,
+    topk=3,
     reranker=rrf_ranker,
 )
 ```
